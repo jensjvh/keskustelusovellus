@@ -1,0 +1,6 @@
+/* css template for overriding bootstrap styles */
+
+html body nav.navbar.navbar-expand-sm .navbar-nav .nav-item.list-group-item {
+    border-radius: 0;
+    background-color: #f8f9fa;
+  }
