@@ -4,3 +4,22 @@ html body nav.navbar.navbar-expand-sm .navbar-nav .nav-item.list-group-item {
     border-radius: 0;
     background-color: #f8f9fa;
   }
+
+html body nav.navbar.navbar-expand-sm .navbar-nav .nav-item.list-group-item.active {
+    background-color: #e6e6e6;
+    border-color: #ffffff;
+}
+
+hr.w-75 {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn.btn-primary {
+    background-color: #999999;
+    border-color: #ebebeb;
+} 
+.btn.btn-primary:active {
+    background-color: #8f8f8f;
+    border-color: #ebebeb;
+}
