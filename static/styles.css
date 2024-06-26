@@ -10,6 +10,10 @@ html body nav.navbar.navbar-expand-sm .navbar-nav .nav-item.list-group-item.acti
     border-color: #ffffff;
 }
 
+.form-group {
+    margin-bottom: 20px;
+}
+
 hr.w-75 {
     margin-left: auto;
     margin-right: auto;
