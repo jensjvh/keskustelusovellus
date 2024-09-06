@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, session
 
 import users
 
@@ -16,6 +16,7 @@ def register():
         email = request.form["email"]
         password = request.form["password"]
         if users.register(username, email, password):
+            session["username"] = username
             return redirect("/")
         else:
             return render_template("register.html", message="Incorrect username or password.")
@@ -31,3 +32,8 @@ def login():
             return redirect("/")
         else:
             return render_template("login.html", message="Incorrect username or password.")
+        
+@app.route("/logout")
+def logout():
+    del session["username"]
+    return redirect("/")

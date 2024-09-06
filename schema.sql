@@ -22,7 +22,7 @@ CREATE TABLE threads (
     content TEXT NOT NULL,
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
 
 CREATE TABLE replies (
     id SERIAL PRIMARY KEY,
@@ -31,12 +31,12 @@ CREATE TABLE replies (
     content TEXT NOT NULL,
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
 
 CREATE TABLE likes (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
     reply_id INTEGER REFERENCES threads(id),
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
 

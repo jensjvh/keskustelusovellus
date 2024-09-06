@@ -2,7 +2,12 @@
 
 Sovellus on toteutus keskustelufoorumista, jolla on keskustelualueita eri aiheille. Alueilla on keskusteluketjuja, joille näkyy tilastoja, kuten aloittaja, tietoja viimeisimmästä viestistä ja lukijoiden ja vastausten määrä. Sovelluksen tarkoituksena on ottaa inspiraatiota vanhan koulukunnan keskustelupalstoista, ja luoda sovellus jolla on moderni ulkoasu ja toiminnallisuus.
 
-Sovelluksen ominaisuuksia:
+## Sovelluksen testaaminen
+
+1. Luo pöydät PostgreSQL tietokantaan käynnistämällä ensin psql, sitten suorittamalla komento `\i schema.sql`
+2. flask run
+
+## Sovelluksen ominaisuuksia:
 
  * Käyttäjä voi kirjautua sisään ja ulos sekä luoda uuden tunnuksen.
  * Käyttäjä näkee sovelluksen etusivulla listan alueista sekä jokaisen alueen ketjujen ja viestien määrän ja viimeksi lähetetyn viestin ajankohdan.
