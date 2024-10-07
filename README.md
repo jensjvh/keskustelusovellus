@@ -4,8 +4,14 @@ Sovellus on toteutus keskustelufoorumista, jolla on keskustelualueita eri aiheil
 
 ## Sovelluksen testaaminen
 
-1. Luo pöydät PostgreSQL tietokantaan käynnistämällä ensin psql, sitten suorittamalla komento `\i schema.sql`
-2. flask run
+1. Asenna vaaditut moduulit tiedostosta `requirements.txt`
+2. Luo `.env` tiedosto, jossa asetat tietokannan sijainnin ja salaisen avaimen, esim:
+```
+DATABASE_URL=postgresql:///user
+SECRET_KEY=95d3763bb55e744e77dd181a47b4e1c6
+```
+3. Luo pöydät PostgreSQL tietokantaan käynnistämällä ensin psql, sitten suorittamalla komento `\i schema.sql`
+4. Käynnistä sovellus komennolla `flask --app app.py run`
 
 ## Sovelluksen ominaisuuksia:
 
