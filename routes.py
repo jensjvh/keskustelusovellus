@@ -2,10 +2,19 @@ from app import app
 from flask import render_template, request, redirect, session
 
 import users
+import threads
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", topics = threads.get_topics())
+
+@app.route("/topics")
+def topics():
+    return index()
+
+@app.route("/topics/<name>")
+def topic(name):
+    return index()
 
 @app.route("/register", methods=["get", "post"])
 def register():
@@ -37,3 +46,7 @@ def login():
 def logout():
     del session["username"]
     return redirect("/")
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
