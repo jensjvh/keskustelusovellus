@@ -2,6 +2,17 @@
 
 Sovellus on toteutus keskustelufoorumista, jolla on keskustelualueita eri aiheille. Alueilla on keskusteluketjuja, joille näkyy tilastoja, kuten aloittaja, tietoja viimeisimmästä viestistä ja lukijoiden ja vastausten määrä. Sovelluksen tarkoituksena on ottaa inspiraatiota vanhan koulukunnan keskustelupalstoista, ja luoda sovellus jolla on moderni ulkoasu ja toiminnallisuus.
 
+## Käynnistysohjeet:
+
+1. Kloonaa repositorio koneellesi, ja luo juurikansioon tiedosto `.env`. Lisää tiedostoon seuraavat rivit:
+```
+DATABASE_URL=<tietokannan-paikallinen-osoite>
+SECRET_KEY=<salainen-avain>
+```
+2. Luo virtuaaliympäristö komennolla `python3 -m venv venv`. Aktivoi ympäristö komennolla `source venv/bin/activate` ja asenna riippuvudet komennolla `pip3 install -r ./requirements.txt`.
+3. Määritä tietokannan skeema komennolla `psql < schema.sql`.
+4. Käynnistä sovellus komennolla `flask run`.
+
 ## Sovelluksen ominaisuuksia:
 
  * Käyttäjä voi kirjautua sisään ja ulos sekä luoda uuden tunnuksen.
