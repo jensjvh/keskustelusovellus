@@ -10,14 +10,14 @@
                     Create thread
                 </div>
                 <div class="card-body">
-                    <form action="/new_thread" method="post">
+                    <form action="{{ url_for('new_thread', topic=topic) }}" method="post">
                         <div class="form-group">
                           <small id="titleHelp" class="form-text text-muted">Enter a valid title.</small>
                           <input type="title" class="form-control" name="title" id="titleInput" aria-describedby="titleHelp" placeholder="Thread Title">     
                         </div>
                         <div class="form-group">
-                          <small id="startreplyHelp" class="form-text text-muted">The starting reply should contain at least 1 character, and less than 300 characters.</small>
-                          <input type="starting_reply" class="form-control" name="starting_reply" id="startreplyInput" minlength="1" maxlength="300" aria-describedby="startreplyHelp" placeholder="starting reply">
+                          <small id="startreplyHelp" class="form-text text-muted">The starting reply should contain at least 1 character, and less than 1000 characters.</small>
+                          <textarea type="starting_reply" class="form-control" name="starting_reply" id="startreplyInput" rows="5" minlength="1" maxlength="1000" aria-describedby="startreplyHelp" placeholder="Starting Reply"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>

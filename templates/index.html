@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-lg-8 mb-3">
             <div class="table-responsive">
-                <table class="table">
+                <table class="table table-hover">
                     <thead class="thead-light">
                         <tr>
                             <th scope="col">Name</th>
@@ -20,7 +20,11 @@
                     <tbody>
                     {% for topic in topics %}
                         <tr>
-                            <td>{{ topic.title }}</td>
+                            <td>
+                            <a href="topics/{{ topic.title }}" class="link-secondary">
+                                {{ topic.title }}
+                            </a>
+                            </td>
                             <td>{{ topic.threads}}</td>
                             <td>{{ topic.replies }}</td>
                             <td>{{ topic.last_reply }}

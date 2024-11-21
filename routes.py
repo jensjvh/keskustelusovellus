@@ -30,12 +30,12 @@ def view_threads(topic):
     ----------
     topic (str): String id of the topic.
     """
-    topic_name = str(topic)
+    topic_name = topic
     return render_template("threads.html", title=topic_name, threads=threads.get_threads(topic))
 
 
-@app.route("/topics/<topic>/new_thread")
-def new_topic(topic):
+@app.route("/topics/<topic>/new_thread", methods=["get", "post"])
+def new_thread(topic):
     """
     Function for handling a route for creating a thread for a particular topic.
 
@@ -43,6 +43,13 @@ def new_topic(topic):
     ----------
     topic (str): String id of the topic.
     """
+    if request.method == "POST":
+        title = request.form["title"]
+        starting_reply = request.form["starting_reply"]
+
+        threads.create_thread(title)
+
+        return redirect(f"/topics/{topic}")
     return render_template("new_thread.html")
 
 

@@ -1,9 +1,9 @@
 """A module for handling functionalities related to threads."""
 
-from flask import request, session
 from sqlalchemy import text
 from db import db
 
+import replies
 
 
 def get_threads(topic):
@@ -12,3 +12,12 @@ def get_threads(topic):
     result = db.session.execute(sql)
 
     return result.fetchall()
+
+def create_thread(topic_id, user_id, title):
+    sql = text("""
+            INSERT INTO Threads (topic_id, user_id, title)
+            VALUES (:topic_id, :user_id, :title)
+                """)
+    db.session.execute(sql, {"topic_id": topic_id,
+                             "user_id": user_id,
+                             "title": title})

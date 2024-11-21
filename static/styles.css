@@ -3,6 +3,11 @@
     font-size: 100%;
 }
 
+body {
+    margin: auto;
+    max-width: 70em;
+}
+
 .navbar-expand-sm .navbar-nav .nav-item.list-group-item {
     border-radius: 0;
     background-color: #f8f9fa;
@@ -25,7 +30,7 @@
     margin: 1em;
 }
 
-hr.w-75 {
+hr.w-100 {
     margin-left: auto;
     margin-right: auto;
     color: #8f8f8fc5
