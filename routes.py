@@ -5,23 +5,33 @@ import users
 import topics
 import threads
 
+
 @app.route("/")
 def index():
-    return render_template("index.html", topics = topics.get_topics())
+    return render_template("index.html", topics=topics.get_topics())
 
 
 @app.route("/topics")
 def view_topics():
     return index()
 
+
+@app.route("/new_thread")
+def new_topic():
+    return render_template("new_thread.html")
+
+
 @app.route("/topics/<topic>")
 def view_threads(topic):
     topic_name = str(topic)
-    return render_template("threads.html", title = topic_name,threads = threads.get_threads(topic))
+    return render_template("threads.html", title=topic_name, threads=threads.get_threads(topic))
 
 
 @app.route("/register", methods=["get", "post"])
 def register():
+    # Check if user is already logged in
+    if 'username' in session:
+        return index()
     if request.method == "GET":
         return render_template("register.html")
     if request.method == "POST":
@@ -37,6 +47,9 @@ def register():
 
 @app.route("/login", methods=["get", "post"])
 def login():
+    # Check if user is already logged in
+    if 'username' in session:
+        return index()
     if request.method == "GET":
         return render_template("login.html")
     if request.method == "POST":
@@ -46,7 +59,7 @@ def login():
             return redirect("/")
         else:
             return render_template("login.html", message="Incorrect username or password.")
-    
+
 
 @app.route("/logout")
 def logout():
