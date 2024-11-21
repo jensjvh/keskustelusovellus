@@ -19,7 +19,6 @@ CREATE TABLE threads (
     thread_id INTEGER REFERENCES topics(id),
     user_id INTEGER REFERENCES users(id),
     title VARCHAR(100) NOT NULL,
-    content TEXT NOT NULL,
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
