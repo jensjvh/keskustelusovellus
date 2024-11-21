@@ -4,7 +4,13 @@ from sqlalchemy import text
 
 
 def get_topics():
-    sql = text("""SELECT * FROM topics;""")
+    sql = text("""
+        SELECT T.title AS title, COUNT(Th.id) AS threads, COUNT(R.id) AS replies
+        FROM Topics T
+        LEFT JOIN Threads Th ON T.id = Th.topic_id
+        LEFT JOIN Replies R ON Th.id = R.thread_id
+        GROUP BY T.id;
+    """)
     result = db.session.execute(sql)
 
     return result.fetchall()

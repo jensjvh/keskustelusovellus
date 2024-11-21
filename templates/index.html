@@ -13,14 +13,16 @@
                         <tr>
                             <th scope="col">Name</th>
                             <th scope="col">Threads</th>
-                            <th scope="col">Posts</th>
-                            <th scope="col">Last post</th>
+                            <th scope="col">Replies</th>
+                            <th scope="col">Last reply</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for topic in topics %}
                         <tr>
                             <td>{{ topic.title }}</td>
+                            <td>{{ topic.threads}}</td>
+                            <td>{{ topic.replies }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
