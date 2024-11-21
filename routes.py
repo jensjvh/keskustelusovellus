@@ -2,16 +2,22 @@ from app import app
 from flask import render_template, request, redirect, session
 
 import users
+import topics
 import threads
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", topics = topics.get_topics())
 
 
 @app.route("/topics")
-def topics():
+def view_topics():
     return index()
+
+@app.route("/topics/<topic>")
+def view_threads(topic):
+    topic_name = str(topic)
+    return render_template("threads.html", title = topic_name,threads = threads.get_threads(topic))
 
 
 @app.route("/register", methods=["get", "post"])
