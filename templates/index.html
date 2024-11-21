@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <p>Topics</p>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 mb-3">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Threads</th>
+                            <th scope="col">Posts</th>
+                            <th scope="col">Last post</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for topic in topics %}
+                        <tr>
+                            <td>{{ topic.title }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
