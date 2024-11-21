@@ -16,16 +16,15 @@ def view_topics():
     return index()
 
 
-@app.route("/new_thread")
-def new_topic():
-    return render_template("new_thread.html")
-
-
 @app.route("/topics/<topic>")
 def view_threads(topic):
     topic_name = str(topic)
     return render_template("threads.html", title=topic_name, threads=threads.get_threads(topic))
 
+
+@app.route("/topics/<topic>/new_thread")
+def new_topic(topic):
+    return render_template("new_thread.html")
 
 @app.route("/register", methods=["get", "post"])
 def register():

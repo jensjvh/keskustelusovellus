@@ -7,6 +7,9 @@
     </div>
     <div class="row">
         <div class="col-lg-8 mb-3">
+            {% if session.username %}
+                <a href="{{ title }}/new_thread" class="btn btn-primary offset-md-10">New Thread</a>
+            {% endif %}
             <div class="table-responsive">
                 <table class="table">
                     <thead class="thead-light">
