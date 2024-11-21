@@ -1,7 +1,8 @@
 """Module for handling routes of the app."""
 
-from flask import render_template, request, redirect, session
 from app import app
+from flask import render_template, request, redirect, session
+
 
 import users
 import topics
