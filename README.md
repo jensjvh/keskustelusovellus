@@ -11,7 +11,8 @@ SECRET_KEY=<salainen-avain>
 ```
 2. Luo virtuaaliympäristö komennolla `python3 -m venv venv`. Aktivoi ympäristö komennolla `source venv/bin/activate` ja asenna riippuvudet komennolla `pip3 install -r ./requirements.txt`.
 3. Määritä tietokannan skeema komennolla `psql < schema.sql`.
-4. Käynnistä sovellus komennolla `flask run`.
+4. Jos haluat lisätä tietokantaan kokeilua varten valmista dataa, suorita komento `python3 initialize_db.py`.
+5. Käynnistä sovellus komennolla `flask run`.
 
 ## Sovelluksen ominaisuuksia:
 

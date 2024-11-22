@@ -17,3 +17,11 @@ def get_topics():
     result = db.session.execute(sql)
 
     return result.fetchall()
+
+def get_topic_by_title(title):
+    sql = text("""
+        SELECT * FROM Topics WHERE title = :title
+    """)
+    result = db.session.execute(sql, {"title": title})
+
+    return result.fetchone()
