@@ -7,6 +7,7 @@ from flask import render_template, request, redirect, session
 import users
 import topics
 import threads
+import replies
 
 
 @app.route("/")
@@ -43,14 +44,22 @@ def new_thread(topic):
     ----------
     topic (str): String id of the topic.
     """
+
+    topic_record = topics.get_topic_by_title(topic)
+    topic_id = topic_record.id
+
     if request.method == "POST":
+        user_id = session.get("user_id")
         title = request.form["title"]
+        
         starting_reply = request.form["starting_reply"]
+        
 
-        threads.create_thread(title)
+        created_thread_id = threads.create_thread(topic_id, user_id, title)
+        replies.create_reply(created_thread_id, user_id, starting_reply)
 
-        return redirect(f"/topics/{topic}")
-    return render_template("new_thread.html")
+        return redirect(f"/topics/")
+    return render_template("new_thread.html", topic = topic)
 
 
 @app.route("/register", methods=["get", "post"])
@@ -62,9 +71,8 @@ def register():
         return render_template("register.html")
     if request.method == "POST":
         username = request.form["username"]
-        email = request.form["email"]
         password = request.form["password"]
-        if users.register(username, email, password):
+        if users.register(username, password):
             session["username"] = username
             return redirect("/")
         return render_template("register.html", message="Incorrect username or password.")

@@ -29,13 +29,13 @@ def set_last_login(id):
     db.session.commit()
 
 
-def register(username, email, password):
+def register(username, password):
     password_hash = generate_password_hash(password)
     try:
         sql = text(
-            """INSERT INTO users (username, email, password_hash) VALUES (:username, :email, :password_hash);""")
+            """INSERT INTO users (username, password_hash) VALUES (:username, :password_hash);""")
         db.session.execute(
-            sql, {"username": username, "email": email, "password_hash": password_hash})
+            sql, {"username": username, "password_hash": password_hash})
         db.session.commit()
     except:
         return False
