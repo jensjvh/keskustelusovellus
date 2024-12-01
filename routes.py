@@ -22,8 +22,8 @@ def view_topics():
     return index()
 
 
-@app.route("/topics/<topic>")
-def view_threads(topic):
+@app.route("/topics/<text_id>")
+def view_threads(text_id):
     """
     Function for handling a route for a particular topic
 
@@ -31,8 +31,8 @@ def view_threads(topic):
     ----------
     topic (str): String id of the topic.
     """
-    topic_name = topic
-    return render_template("threads.html", title=topic_name, threads=threads.get_threads(topic))
+    topic = topics.get_topic_by_text_id(text_id)
+    return render_template("threads.html", title=topic.title, threads=threads.get_threads(topic.id))
 
 
 @app.route("/topics/<topic>/new_thread", methods=["get", "post"])
@@ -100,5 +100,5 @@ def logout():
 
 
 @app.errorhandler(404)
-def page_not_found():
+def page_not_found(e):
     return render_template('404.html'), 404

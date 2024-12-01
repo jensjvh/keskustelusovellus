@@ -15,9 +15,10 @@ CREATE TABLE users (
 
 CREATE TABLE topics (
     id SERIAL PRIMARY KEY,
-    title VARCHAR(100) UNIQUE NOT NULL,
     text_id VARCHAR(20) UNIQUE NOT NULL,
-    description TEXT
+    title VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT,
+    is_hidden BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE threads (

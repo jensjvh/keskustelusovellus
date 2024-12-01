@@ -61,13 +61,38 @@ def create_admin_user():
 
 
 def create_topics():
-    pass
+    with app.app_context():
+        try:
+            sql = text(
+                """INSERT INTO topics (text_id, title, description) VALUES (:text_id, :title, :description);"""
+            )
+            db.session.execute(
+                sql, {"text_id": "general_discussion",
+                      "title": "General Discussion",
+                      "description": "Discuss anything."}
+            )
+            db.session.execute(
+                sql, {"text_id": "announcements",
+                      "title": "Announcements",
+                      "description": "Forum announcements."}
+            )
+            db.session.execute(
+                sql, {"text_id": "feedback",
+                      "title": "Feedback",
+                      "description": "Give us feedback."}
+            )
+            db.session.commit()
+            print("Default topics created successfully.")
+        except Exception as e:
+            print(f"An error occurred while creating the default topics: {e}")
 
 
 def initialize_db():
+    print("Initializing database...")
     clear_all()
     create_default_user()
     create_admin_user()
+    create_topics()
 
 
 if __name__ == "__main__":
