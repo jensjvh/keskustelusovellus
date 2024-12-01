@@ -1,7 +1,7 @@
 """Module for handling routes of the app."""
 
 from app import app
-from flask import render_template, request, redirect, session
+from flask import render_template, request, redirect, session, url_for
 
 
 import users
@@ -32,11 +32,11 @@ def view_threads(text_id):
     topic (str): String id of the topic.
     """
     topic = topics.get_topic_by_text_id(text_id)
-    return render_template("threads.html", title=topic.title, threads=threads.get_threads(topic.id))
+    return render_template("threads.html", topic=topic, threads=threads.get_threads(topic.id))
 
 
-@app.route("/topics/<topic>/new_thread", methods=["get", "post"])
-def new_thread(topic):
+@app.route("/topics/<text_id>/new_thread", methods=["get", "post"])
+def new_thread(text_id):
     """
     Function for handling a route for creating a thread for a particular topic.
 
@@ -45,7 +45,7 @@ def new_thread(topic):
     topic (str): String id of the topic.
     """
 
-    topic_record = topics.get_topic_by_title(topic)
+    topic_record = topics.get_topic_by_text_id(text_id)
     topic_id = topic_record.id
 
     if request.method == "POST":
@@ -58,8 +58,8 @@ def new_thread(topic):
         created_thread_id = threads.create_thread(topic_id, user_id, title)
         replies.create_reply(created_thread_id, user_id, starting_reply)
 
-        return redirect(f"/topics/")
-    return render_template("new_thread.html", topic = topic)
+        return redirect(url_for('view_threads', text_id=text_id))
+    return render_template("new_thread.html", topic = topic_record)
 
 
 @app.route("/register", methods=["get", "post"])
