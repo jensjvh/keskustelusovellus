@@ -42,5 +42,5 @@ CREATE TABLE replies (
 CREATE TABLE likes (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
-    reply_id INTEGER REFERENCES replies(id),
+    reply_id INTEGER REFERENCES replies(id)
 );
