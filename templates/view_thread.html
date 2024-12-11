@@ -27,7 +27,11 @@
                 <h5 class="card-header">#{{ i+1 }} {{ replies[i].username }}</h5>
                 <div class="card-body">
                     <h5 class="card-title custom-card-title">{{ replies[i].created_time }}</h5>
-                    <p class="card-text">{{ replies[i].content }}</p>
+                    <p class="card-text">
+                        {% for row in replies[i].content %}
+                            {{ row }}<br>
+                        {% endfor %}
+                    </p>
                 </div>
                 </div>
             {% endfor %}

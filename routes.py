@@ -2,6 +2,7 @@
 
 from app import app
 from datetime import datetime
+from functools import wraps
 from flask import render_template, request, redirect, session, url_for
 
 
@@ -10,6 +11,15 @@ import topics
 import threads
 import replies
 
+
+def login_required(f):
+    """Function used for decorating routes requiring a login."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route("/")
 def index():
@@ -57,6 +67,7 @@ def view_thread(topic_text_id, thread_id):
 
 
 @app.route("/topics/<topic_text_id>/new_thread", methods=["get", "post"])
+@login_required
 def new_thread(topic_text_id):
     """
     Function for handling a route for creating a thread for a particular topic.
@@ -82,6 +93,7 @@ def new_thread(topic_text_id):
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>/new_reply", methods=["get", "post"])
+@login_required
 def new_reply(topic_text_id, thread_id):
     """
     Function for handling a route for creating a reply inside a thread.

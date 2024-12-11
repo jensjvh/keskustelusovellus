@@ -26,7 +26,7 @@ def get_replies(thread_id):
     for reply in replies:
         formatted_reply = {'id': reply.id,
                       'username': reply.username,
-                      'content': reply.content,
+                      'content': reply.content.split("\n"),
                       'created_time': reply.created_time
                      }
         formatted_reply['created_time'] = reply.created_time.strftime("%d.%m.%Y at %H:%M:%S")
