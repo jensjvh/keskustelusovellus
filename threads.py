@@ -65,6 +65,17 @@ def get_threads(topic):
     return formatted_threads
 
 
+def get_threads_by_user(user_id):
+    sql = text("""
+        SELECT id, title, created_time, updated_time
+        FROM threads
+        WHERE user_id = :user_id
+        ORDER BY created_time DESC
+    """)
+    result = db.session.execute(sql, {"user_id": user_id})
+    return result.fetchall()
+
+
 def get_thread(thread_id):
     """Get thread with given id."""
     sql = text("""

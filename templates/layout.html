@@ -32,7 +32,7 @@
           {% if session.username %}
           <li class="nav-item list-group-item d-flex align-items-center">
             <span class="navbar-text">
-                Hi, {{ session.username }}
+                <a class="nav-link" href="/profile">Hi, {{ session.username }}</a>
             </span>
           </li> 
           <li class="nav-item list-group-item d-flex align-items-center">

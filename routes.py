@@ -116,6 +116,15 @@ def new_reply(topic_text_id, thread_id):
         return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id))
     return render_template("new_reply.html", topic=topic_record, thread=thread_record)
 
+@app.route("/profile")
+@login_required
+def profile():
+    """Function for handling the profile route."""
+    username = session.get("username")
+    user_data = users.get_user_by_username(username)
+    user_threads = threads.get_threads_by_user(user_data.id)
+    user_replies = replies.get_replies_by_user(user_data.id)
+    return render_template("profile.html", user=user_data, threads=user_threads, replies=user_replies)
 
 @app.route("/search", methods=["get", "post"])
 def search():

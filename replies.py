@@ -25,6 +25,22 @@ def get_replies(thread_id):
 
     return formatted_replies
 
+
+def get_replies_by_user(user_id):
+    sql = text("""
+        SELECT R.id as id, R.content as content, R.created_time as created_time,
+               Th.title as thread_title, Th.id as thread_id,
+               T.title as topic_title, T.text_id as topic_text_id
+        FROM replies R
+        INNER JOIN threads Th ON R.thread_id = Th.id
+        INNER JOIN topics T ON Th.topic_id = T.id
+        WHERE R.user_id = :user_id
+        ORDER BY R.created_time DESC
+    """)
+    result = db.session.execute(sql, {"user_id": user_id})
+    return result.fetchall()
+
+
 def get_matching_replies(query):
     """Get replies matching a pattern."""
     sql = text("""
