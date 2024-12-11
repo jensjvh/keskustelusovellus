@@ -3,7 +3,8 @@
 from app import app
 from datetime import datetime
 from functools import wraps
-from flask import render_template, request, redirect, session, url_for
+from flask import render_template, request, redirect, session, url_for, abort
+import secrets
 
 
 import users
@@ -13,7 +14,7 @@ import replies
 
 
 def login_required(f):
-    """Function used for decorating routes requiring a login."""
+    """Decorator for routes requiring a login."""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'username' not in session:
@@ -21,9 +22,31 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+def csrf_protected(f):
+    """Decorator for protecting routes against CSRF attacks."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Apply only to POST requests
+        if request.method == "POST":
+            token_in_form = request.form.get("csrf_token")
+            token_in_session = session.get("csrf_token")
+            if not token_in_form or token_in_form != token_in_session:
+                abort(403, description="Invalid CSRF token")
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def generate_csrf_token():
+    if 'csrf_token' not in session:
+        session['csrf_token'] = secrets.token_hex(16)
+    return session['csrf_token']
+
+
 @app.route("/")
 def index():
     """Function for handling the root route."""
+    generate_csrf_token()
     return render_template("index.html", topics=topics.get_topics())
 
 
@@ -68,6 +91,7 @@ def view_thread(topic_text_id, thread_id):
 
 @app.route("/topics/<topic_text_id>/new_thread", methods=["get", "post"])
 @login_required
+@csrf_protected
 def new_thread(topic_text_id):
     """
     Function for handling a route for creating a thread for a particular topic.
@@ -94,6 +118,7 @@ def new_thread(topic_text_id):
 
 @app.route("/topics/<topic_text_id>/<thread_id>/new_reply", methods=["get", "post"])
 @login_required
+@csrf_protected
 def new_reply(topic_text_id, thread_id):
     """
     Function for handling a route for creating a reply inside a thread.
@@ -127,6 +152,7 @@ def profile():
     return render_template("profile.html", user=user_data, threads=user_threads, replies=user_replies)
 
 @app.route("/search", methods=["get", "post"])
+@csrf_protected
 def search():
     """Function for handling search route."""
     if request.method == "POST":
@@ -136,9 +162,10 @@ def search():
     return render_template("search.html")
 
 @app.route("/register", methods=["get", "post"])
+@csrf_protected
 def register():
     """
-    Function for registering a user.
+    Function for handling register route.
     """
     # Check if user is already logged in
     if 'username' in session:
@@ -150,6 +177,7 @@ def register():
         password = request.form["password"]
         if users.register(username, password):
             session["username"] = username
+            session["csrf_token"] = generate_csrf_token()
             return redirect("/")
         return render_template("register.html", message="Incorrect username or password.")
 
@@ -157,7 +185,7 @@ def register():
 @app.route("/login", methods=["get", "post"])
 def login():
     """
-    Function for logging in a user.
+    Function for handling login route.
     """
     # Check if user is already logged in
     if 'username' in session:
@@ -169,6 +197,7 @@ def login():
         password = request.form["password"]
         if users.login(username, password):
             session["username"] = username
+            session["csrf_token"] = generate_csrf_token()
             return redirect("/")
         return render_template("login.html", message="Incorrect username or password.")
 
@@ -176,15 +205,23 @@ def login():
 @app.route("/logout")
 def logout():
     """
-    Function for logging out a user.
+    Function for handling logout route.
     """
     del session["username"]
+    del session["csrf_token"]
     return redirect("/")
 
 
 @app.errorhandler(404)
 def page_not_found(e):
     """
-    Function for rendering error template when running into an error.
+    Function for rendering error template when running into a 404 error.
     """
-    return render_template('404.html'), 404
+    return render_template('error.html', error_message="Page not found"), 404
+
+@app.errorhandler(403)
+def forbidden(e):
+    """
+    Function for rendering error template when running into a 403 error.
+    """
+    return render_template('error.html', error_message="Access forbidden"), 403

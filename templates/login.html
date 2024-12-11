@@ -11,6 +11,7 @@
                 </div>
                 <div class="card-body">
                     <form action="/login" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
                         <div class="form-group">
                           <input type="username" class="form-control" name="username" id="usernameInput" minlength="2" maxlength="15" aria-describedby="usernameHelp" placeholder="username">
                         </div>

@@ -12,6 +12,7 @@
                 </div>
                 <div class="card-body">
                     <form action="/register" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
                         <div class="form-group">
                           <small id="usernameHelp" class="form-text text-muted">Your username should be 2-15 characters long.</small>
                           <input type="username" class="form-control" name="username" id="usernameInput" minlength="2" maxlength="15" aria-describedby="usernameHelp" placeholder="username">

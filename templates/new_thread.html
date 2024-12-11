@@ -11,6 +11,7 @@
                 </div>
                 <div class="card-body">
                     <form action="{{ url_for('new_thread', topic_text_id=topic.text_id) }}" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
                         <div class="form-group">
                           <small id="titleHelp" class="form-text text-muted">Enter a valid title.</small>
                           <input type="title" class="form-control" name="title" id="titleInput" aria-describedby="titleHelp" placeholder="Thread Title">     

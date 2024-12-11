@@ -11,6 +11,7 @@
                 </div>
                 <div class="card-body">
                     <form action="{{ url_for('new_reply', topic_text_id=topic.text_id, thread_id=thread.id) }}" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
                         <div class="form-group">
                           <small id="replyHelp" class="form-text text-muted">The reply should contain at least 1 character, and less than 1000 characters.</small>
                           <textarea type="reply" class="form-control" name="reply" id="replyInput" rows="5" minlength="1" maxlength="1000" aria-describedby="replyHelp" placeholder="Reply"></textarea>
