@@ -11,6 +11,7 @@
                 </div>
                 <div class="card-body">
                     <form action="{{ url_for('search') }}" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
                         <div class="form-group">
                           <small id="searchHelp" class="form-text text-muted">Enter your search query<br>(case insensitive, word or a phrase, eg. "cheese").</small>
                           <input type="text" class="form-control" name="query" id="searchInput" aria-describedby="searchHelp" placeholder="Query">
