@@ -71,6 +71,7 @@ def get_thread(id):
         SELECT Th.id as id,
                Th.topic_id as topic_id,
                Th.user_id as user_id,
+               U.username as username,
                Th.title as title,
                Th.created_time as created_time,
                Th.updated_time as updated_time,
@@ -78,8 +79,9 @@ def get_thread(id):
                MAX(R.created_time) AS last_reply
         FROM Threads Th
         LEFT JOIN Replies R ON Th.id = R.thread_id
+        LEFT JOIN Users U ON Th.user_id = U.id
         WHERE Th.id = :id
-        GROUP BY Th.id;
+        GROUP BY Th.id, U.username;
     """)
     result = db.session.execute(sql, {"id": id})
 
