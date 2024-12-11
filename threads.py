@@ -65,7 +65,7 @@ def get_threads(topic):
     return formatted_threads
 
 
-def get_thread(id):
+def get_thread(thread_id):
     """Get thread with given id."""
     sql = text("""
         SELECT Th.id as id,
@@ -83,6 +83,6 @@ def get_thread(id):
         WHERE Th.id = :id
         GROUP BY Th.id, U.username;
     """)
-    result = db.session.execute(sql, {"id": id})
+    result = db.session.execute(sql, {"id": thread_id})
 
     return result.fetchone()

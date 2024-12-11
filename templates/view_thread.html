@@ -29,7 +29,10 @@
                     <h5 class="card-title custom-card-title">{{ replies[i].created_time }}</h5>
                     <p class="card-text">
                         {% for row in replies[i].content %}
-                            {{ row }}<br>
+                            <p>{{ row }}</p>
+                            {% if not loop.last %}
+                                <br>
+                            {% endif %}
                         {% endfor %}
                     </p>
                 </div>

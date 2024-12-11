@@ -117,6 +117,15 @@ def new_reply(topic_text_id, thread_id):
     return render_template("new_reply.html", topic=topic_record, thread=thread_record)
 
 
+@app.route("/search", methods=["get", "post"])
+def search():
+    """Function for handling search route."""
+    if request.method == "POST":
+        query = request.form["query"]
+        query_result = replies.get_matching_replies(query)
+        return render_template("search_results.html", query=query, query_result=query_result)
+    return render_template("search.html")
+
 @app.route("/register", methods=["get", "post"])
 def register():
     """

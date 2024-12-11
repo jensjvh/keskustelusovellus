@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+    <p>{{ message }}</p>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    Search
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('search') }}" method="post">
+                        <div class="form-group">
+                          <small id="searchHelp" class="form-text text-muted">Enter your search query<br>(case insensitive, word or a phrase, eg. "cheese").</small>
+                          <input type="text" class="form-control" name="query" id="searchInput" aria-describedby="searchHelp" placeholder="Query">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -15,7 +15,7 @@ def clear_all():
     with app.app_context():
         try:
             schema_file = 'schema.sql'
-            with open(schema_file, 'r') as file:
+            with open(schema_file, 'r', encoding="utf-8") as file:
                 schema_sql = file.read()
 
             db.session.execute(text(schema_sql))
@@ -27,10 +27,16 @@ def clear_all():
 
 
 def create_default_user():
+    """
+    Create a default user.
+    username: user
+    password: defaultpassword
+    """
     with app.app_context():
         try:
             sql = text(
-                """INSERT INTO users (username, password_hash) VALUES (:username, :password_hash);"""
+                """INSERT INTO users (username, password_hash)
+                   VALUES (:username, :password_hash);"""
             )
             password_hash = generate_password_hash("defaultpassword")
             db.session.execute(
@@ -44,10 +50,16 @@ def create_default_user():
 
 
 def create_admin_user():
+    """
+    Create a default admin user.
+    username: admin
+    password: adminpassword
+    """
     with app.app_context():
         try:
             sql = text(
-                """INSERT INTO users (username, password_hash, is_admin) VALUES (:username, :password_hash, TRUE);"""
+                """INSERT INTO users (username, password_hash, is_admin)
+                   VALUES (:username, :password_hash, TRUE);"""
             )
             password_hash = generate_password_hash("adminpassword")
             db.session.execute(
@@ -61,10 +73,17 @@ def create_admin_user():
 
 
 def create_topics():
+    """
+    Create default topics:
+    General Discussion,
+    Announcements,
+    Feedback.
+    """
     with app.app_context():
         try:
             sql = text(
-                """INSERT INTO topics (text_id, title, description) VALUES (:text_id, :title, :description);"""
+                """INSERT INTO topics (text_id, title, description)
+                   VALUES (:text_id, :title, :description);"""
             )
             db.session.execute(
                 sql, {"text_id": "general_discussion",
@@ -88,6 +107,7 @@ def create_topics():
 
 
 def initialize_db():
+    """Execute all specified functions."""
     print("Initializing database...")
     clear_all()
     create_default_user()

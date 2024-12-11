@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+    <h1>Search Results for "{{ query }}"</h1>
+    <div class="row">
+        <div class="col-md-12">
+            {% if query_result %}
+                <ul class="list-group">
+                    {% for result in query_result %}
+                        <li class="list-group-item">
+                            <strong>{{ result.username }}</strong>:
+                            {% for row in result.content %}
+                                <p>{{ row }}</p>
+                                {% if not loop.last %}
+                                    <br>
+                                {% endif %}
+                            {% endfor %}
+                            <small class="text-muted">{{ result.created_time }}</small>
+                            <br>
+                            <small class="text-muted">
+                                In thread: <a href="{{ url_for('view_thread', topic_text_id=result.topic_text_id, thread_id=result.thread_id) }}">{{ result.thread_title }}</a>
+                                <br>
+                                In topic: <a href="{{ url_for('view_threads', text_id=result.topic_text_id) }}">{{ result.topic_title }}</a>
+                            </small>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No results found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
