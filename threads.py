@@ -24,6 +24,22 @@ def create_thread(topic_id, user_id, title):
     return thread_id.scalar()
 
 
+def change_thread_title(thread_id, title):
+    """
+    A function for changing the title of an existing thread.
+    """
+    sql = text("""
+               UPDATE threads
+               SET title = :title
+               WHERE id = :thread_id;
+               """)
+    
+    db.session.execute(sql, {"title": title,
+                             "thread_id": thread_id})
+
+    db.session.commit()
+
+
 def get_threads(topic):
     """Get threads from a given topic."""
     sql = text("""
@@ -38,7 +54,8 @@ def get_threads(topic):
         FROM Threads Th
         LEFT JOIN Replies R ON Th.id = R.thread_id
         WHERE Th.topic_id = :topic_id
-        GROUP BY Th.id;
+        GROUP BY Th.id
+        ORDER BY last_reply DESC;
     """)
     result = db.session.execute(sql, {"topic_id": topic})
 

@@ -6,7 +6,7 @@
         <div class="col-lg-3 mb-2 d-flex flex-column justify-content-center align-items-left">
             <h1>{{ topic.title }}</h1>
         </div>
-        <div class="col-lg-3 mb-2 d-flex flex-column justify-content-center align-items-center">
+        <div class="col-lg-2 mb-2 d-flex flex-column justify-content-center align-items-center">
             {% if session.username %}
                 <a href="{{ topic.text_id }}/new_thread" class="btn btn-primary">New Thread</a>
             {% endif %}
@@ -26,7 +26,7 @@
                     <tbody>
                     {% for thread in threads %}
                         <tr>
-                            <td><a href="{{ url_for('view_threads', text_id=topic.text_id) }}/{{ thread.id }}" class="link-secondary">{{ thread.title }}</a></td>
+                            <td><a href="{{ url_for('view_threads', topic_text_id=topic.text_id) }}/{{ thread.id }}" class="link-secondary">{{ thread.title }}</a></td>
                             <td>{{ thread.replies }}</td>
                             <td>{{ thread.last_reply }}</td>
                         </tr>

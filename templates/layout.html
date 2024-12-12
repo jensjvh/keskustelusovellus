@@ -12,6 +12,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+</div>
 <nav class="navbar navbar-expand-sm">
     <div class="container d-flex justify-content-center align-items-center">
         <a class="navbar-brand d-flex text-center" href="/">
@@ -30,7 +43,7 @@
             </a>
           </li>
           {% if session.username %}
-          <li class="nav-item list-group-item d-flex align-items-center">
+          <li class="nav-item list-group-item d-flex align-items-center {{ 'active' if request.path == '/profile' else '' }}">
             <span class="navbar-text">
                 <a class="nav-link" href="/profile">Hi, {{ session.username }}</a>
             </span>

@@ -3,25 +3,25 @@
 
 <div class="container">
     <div class="row min-height: 100vh;">
-        <div class="col-lg-3 mb-3 d-flex flex-column justify-content-center align-items-left">
+        <div class="col-lg-3 mb-2 d-flex flex-column justify-content-center align-items-left">
             <h1>Subject: {{ thread.title }}</h1>
         </div>
         {% if session.username %}
-            <div class="col-lg-1 mb-3 d-flex flex-column justify-content-center align-items-center">
+            <div class="col-lg-2 mb-2 d-flex flex-column justify-content-center align-items-center">
                 <a href="{{ thread.id }}/new_reply" class="btn btn-primary">Reply</a>
             </div>
             {% if session.username == thread.username %}
-                <div class="col-lg-1 mb-3 d-flex flex-column justify-content-center align-items-center">
+                <div class="col-lg-1 mb-2 d-flex flex-column justify-content-center align-items-center">
                     <a href="{{ thread.id }}/edit_thread" class="btn btn-primary">Edit</a>
                 </div>
-                <div class="col-lg-1 mb-3 d-flex flex-column justify-content-center align-items-center">
+                <div class="col-lg-1 mb-2 d-flex flex-column justify-content-center align-items-center">
                     <a href="{{ thread.id }}/delete_thread" class="btn btn-primary">Delete</a>
                 </div>
             {% endif %}
         {% endif %}
     </div>
     <div class="row">
-        <div class="col-lg-8 mb-3">
+        <div class="col-lg-8 mb-2">
             {% for i in range(replies| length) %}
             <div class="card mb-2">
                 <h5 class="card-header">#{{ i+1 }} {{ replies[i].username }}</h5>

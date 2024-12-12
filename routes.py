@@ -3,7 +3,7 @@
 from app import app
 from datetime import datetime
 from functools import wraps
-from flask import render_template, request, redirect, session, url_for, abort
+from flask import render_template, request, redirect, session, url_for, abort, flash
 import secrets
 
 
@@ -56,16 +56,16 @@ def view_topics():
     return index()
 
 
-@app.route("/topics/<text_id>")
-def view_threads(text_id):
+@app.route("/topics/<topic_text_id>")
+def view_threads(topic_text_id):
     """
     Function for handling a route for a particular topic
 
     Parameters
     ----------
-    text_id (str): String id of the topic.
+    topic_text_id (str): String id of the topic.
     """
-    topic = topics.get_topic_by_text_id(text_id)
+    topic = topics.get_topic_by_text_id(topic_text_id)
     threads_data = threads.get_threads(topic.id)
 
     return render_template("threads.html", topic=topic, threads=threads_data)
@@ -78,7 +78,7 @@ def view_thread(topic_text_id, thread_id):
 
     Parameters
     ----------
-    text_id (str): String id of the topic.
+    topic_text_id (str): String id of the topic.
     thread_id (int): id of the thread.
     """
     thread_data = threads.get_thread(thread_id)
@@ -98,7 +98,7 @@ def new_thread(topic_text_id):
 
     Parameters
     ----------
-    topic (str): String id of the topic.
+    topic_text_id (str): String id of the topic.
     """
     topic_record = topics.get_topic_by_text_id(topic_text_id)
     topic_id = topic_record.id
@@ -112,8 +112,36 @@ def new_thread(topic_text_id):
         created_thread_id = threads.create_thread(topic_id, user_id, title)
         replies.create_reply(created_thread_id, user_id, starting_reply)
 
-        return redirect(url_for('view_threads', text_id=topic_text_id))
+        return redirect(url_for('view_threads', topic_text_id=topic_text_id))
     return render_template("new_thread.html", topic=topic_record)
+
+
+@app.route("/topics/<topic_text_id>/<thread_id>/edit_thread", methods=["get", "post"])
+@login_required
+@csrf_protected
+def edit_thread(topic_text_id, thread_id):
+    """
+    Function for handling a route for editing a thread.
+
+    Parameters
+    ----------
+    topic_text_id (str): String id of the topic.
+    thread_id (int): id of the thread.
+    """
+    topic_record = topics.get_topic_by_text_id(topic_text_id)
+    thread_record = threads.get_thread(thread_id)
+    thread_id = thread_record.id
+    topic_id = topic_record.id
+
+    if thread_record.user_id != session.get("user_id"):
+        flash("You do not have permission to edit this thread.", "error")
+        return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id))
+
+    if request.method == "POST":
+        new_title = request.form["title"]
+        threads.change_thread_title(thread_id, new_title)
+        return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id = thread_id))
+    return render_template("edit_thread.html", thread = thread_record,topic=topic_record)
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>/new_reply", methods=["get", "post"])
