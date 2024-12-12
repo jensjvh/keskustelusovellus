@@ -52,3 +52,13 @@ hr.w-100 {
 .custom-card-title {
     color: #007bff;
 }
+
+.alert-error {
+    text-decoration: underline;
+    text-decoration-color: red;
+}
+
+.alert-message {
+    text-decoration: underline;
+    text-decoration-color: green;
+}

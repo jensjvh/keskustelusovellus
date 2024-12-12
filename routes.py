@@ -18,6 +18,7 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'username' not in session:
+            flash("Please log in first", "message")
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
@@ -111,7 +112,7 @@ def new_thread(topic_text_id):
 
         created_thread_id = threads.create_thread(topic_id, user_id, title)
         replies.create_reply(created_thread_id, user_id, starting_reply)
-
+        flash("Thread created successfully!", "message")
         return redirect(url_for('view_threads', topic_text_id=topic_text_id))
     return render_template("new_thread.html", topic=topic_record)
 
@@ -131,15 +132,15 @@ def edit_thread(topic_text_id, thread_id):
     topic_record = topics.get_topic_by_text_id(topic_text_id)
     thread_record = threads.get_thread(thread_id)
     thread_id = thread_record.id
-    topic_id = topic_record.id
 
     if thread_record.user_id != session.get("user_id"):
-        flash("You do not have permission to edit this thread.", "error")
+        flash("You do not have permission to edit this thread", "error")
         return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id))
 
     if request.method == "POST":
         new_title = request.form["title"]
         threads.change_thread_title(thread_id, new_title)
+        flash(f'Thread title changed from "{thread_record.title}" to "{new_title}"')
         return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id = thread_id))
     return render_template("edit_thread.html", thread = thread_record,topic=topic_record)
 
@@ -165,7 +166,7 @@ def new_reply(topic_text_id, thread_id):
         user_id = session.get("user_id")
         content = request.form["reply"]
         replies.create_reply(thread_id, user_id, content)
-
+        flash("Reply sent")
         return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id))
     return render_template("new_reply.html", topic=topic_record, thread=thread_record)
 
@@ -206,8 +207,10 @@ def register():
         if users.register(username, password):
             session["username"] = username
             session["csrf_token"] = generate_csrf_token()
+            flash("Registration successful, welcome!", "message")
             return redirect("/")
-        return render_template("register.html", message="Incorrect username or password.")
+        flash("Invalid username or password", "error")
+        return render_template("register.html")
 
 
 @app.route("/login", methods=["get", "post"])
@@ -226,8 +229,10 @@ def login():
         if users.login(username, password):
             session["username"] = username
             session["csrf_token"] = generate_csrf_token()
+            flash("Logged in successfully!", "message")
             return redirect("/")
-        return render_template("login.html", message="Incorrect username or password.")
+        flash("Incorrect username or password", "error")
+        return render_template("login.html")
 
 
 @app.route("/logout")
@@ -237,6 +242,7 @@ def logout():
     """
     del session["username"]
     del session["csrf_token"]
+    flash("Logged out", "message")
     return redirect("/")
 
 
