@@ -67,10 +67,11 @@ def get_threads(topic):
 
 def get_threads_by_user(user_id):
     sql = text("""
-        SELECT id, title, created_time, updated_time
-        FROM threads
-        WHERE user_id = :user_id
-        ORDER BY created_time DESC
+        SELECT Th.id, Th.title, Th.created_time, Th.updated_time, T.text_id as topic_text_id
+        FROM threads Th
+        INNER JOIN topics T ON Th.topic_id = T.id
+        WHERE Th.user_id = :user_id
+        ORDER BY Th.created_time DESC
     """)
     result = db.session.execute(sql, {"user_id": user_id})
     return result.fetchall()
