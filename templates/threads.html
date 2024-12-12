@@ -35,6 +35,14 @@
                 </table>
             </div>
         </div>
+        <div class="col-lg-3 mb-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Topics</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ topic.title }}</li>
+                </ol>
+            </nav>
+        </div>
     </div>
 </div>
 

@@ -39,6 +39,15 @@
                 </div>
             {% endfor %}
         </div>
+        <div class="col-lg-3 mb-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Topics</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('view_threads', topic_text_id=topic.text_id) }}">{{ topic.title }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ thread.title }}</li>
+                </ol>
+            </nav>
+        </div>
     </div>
 </div>
 

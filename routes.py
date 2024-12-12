@@ -83,11 +83,13 @@ def view_thread(topic_text_id, thread_id):
     thread_id (int): id of the thread.
     """
     thread_data = threads.get_thread(thread_id)
+    topic_data = topics.get_topic_by_text_id(topic_text_id)
     reply_data = replies.get_replies(thread_id)
 
     return render_template("view_thread.html",
                            thread=thread_data,
-                           replies=reply_data)
+                           replies=reply_data,
+                           topic=topic_data)
 
 
 @app.route("/topics/<topic_text_id>/new_thread", methods=["get", "post"])
