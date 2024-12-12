@@ -20,7 +20,7 @@ SECRET_KEY=<salainen-avain>
  - [x] Käyttäjä näkee sovelluksen etusivulla listan alueista sekä jokaisen alueen ketjujen ja viestien määrän ja viimeksi lähetetyn viestin ajankohdan.
  - [x] Käyttäjä voi luoda alueelle uuden ketjun antamalla ketjun otsikon ja aloitusviestin sisällön.
  - [x] Käyttäjä voi kirjoittaa uuden viestin olemassa olevaan ketjuun.
- - [ ] Käyttäjä voi muokata luomansa ketjun otsikkoa sekä lähettämänsä viestin sisältöä. Käyttäjä voi myös poistaa ketjun tai viestin.
+ - [ ] Käyttäjä voi muokata luomansa ketjun otsikkoa sekä lähettämänsä viestin sisältöä. Käyttäjä voi myös poistaa viestinsä, jolloin tilalle ilmestyy "deleted message"-tunniste. Ketjuja voi poistaa vain ylläpitäjä.
  - [ ] Käyttäjä voi tykätä viesteistä, ja nähdä profiilisivullaan omat viestinsä ja tykätyt viestit
  - [x] Käyttäjä voi etsiä kaikki viestit, joiden osana on annettu sana.
  - [ ] Ylläpitäjä voi lisätä ja poistaa keskustelualueita.
