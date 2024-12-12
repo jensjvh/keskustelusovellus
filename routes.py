@@ -242,7 +242,9 @@ def logout():
     """
     Function for handling logout route.
     """
+    del session["user_id"]
     del session["username"]
+    del session["is_admin"]
     del session["csrf_token"]
     flash("Logged out", "message")
     return redirect("/")

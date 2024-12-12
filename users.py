@@ -16,7 +16,7 @@ def login(username, password):
     if check_password_hash(user.password_hash, password):
         session["user_id"] = user.id
         session["username"] = user.username
-        session["admin"] = user.is_admin
+        session["is_admin"] = user.is_admin
         set_last_login(user.id)
         return True
     return False
