@@ -10,10 +10,12 @@
             <div class="col-lg-2 mb-2 d-flex flex-column justify-content-center align-items-center">
                 <a href="{{ thread.id }}/new_reply" class="btn btn-primary">Reply</a>
             </div>
-            {% if session.username == thread.username %}
+            {% if session.username == thread.username  or session.is_admin %}
                 <div class="col-lg-1 mb-2 d-flex flex-column justify-content-center align-items-center">
                     <a href="{{ thread.id }}/edit_thread" class="btn btn-primary">Edit</a>
                 </div>
+            {% endif %}
+            {% if session.is_admin %}
                 <div class="col-lg-1 mb-2 d-flex flex-column justify-content-center align-items-center">
                     <a href="{{ thread.id }}/delete_thread" class="btn btn-primary">Delete</a>
                 </div>

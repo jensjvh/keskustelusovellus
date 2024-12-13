@@ -87,6 +87,17 @@ def format_replies(replies):
 
     return formatted_replies
 
+def remove_replies_with_thread_id(thread_id):
+    """Delete all replies with given thread id."""
+    sql = text("""
+               DELETE FROM replies
+               WHERE thread_id = :thread_id;
+               """)
+
+    db.session.execute(sql, {"thread_id": thread_id})
+
+    db.session.commit()
+
 def create_reply(thread_id, user_id, content):
     """Create a new reply."""
     sql = text("""

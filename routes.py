@@ -24,6 +24,15 @@ def login_required(f):
     return decorated_function
 
 
+def admin_only(f):
+    """Decorator for routes requiring admin."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('is_admin', False):
+            abort(403, description="Access restricted")
+        return f(*args, **kwargs)
+    return decorated_function
+
 def csrf_protected(f):
     """Decorator for protecting routes against CSRF attacks."""
     @wraps(f)
@@ -147,6 +156,31 @@ def edit_thread(topic_text_id, thread_id):
     return render_template("edit_thread.html", thread = thread_record,topic=topic_record)
 
 
+@app.route("/topics/<topic_text_id>/<thread_id>/delete_thread", methods=["get", "post"])
+@admin_only
+@login_required
+@csrf_protected
+def delete_thread(topic_text_id, thread_id):
+    """
+    Function for handling a route for deleting a thread.
+
+    Parameters
+    ----------
+    topic_text_id (str): String id of the topic.
+    thread_id (int): id of the thread.
+    """
+    topic_record = topics.get_topic_by_text_id(topic_text_id)
+    thread_record = threads.get_thread(thread_id)
+    thread_id = thread_record.id
+
+    if request.method == "POST":
+        replies.remove_replies_with_thread_id(thread_id)
+        threads.remove_thread(thread_id)
+        flash(f'Thread {thread_record.title} with id {thread_id} removed')
+        return redirect(url_for('view_threads', topic_text_id=topic_text_id))
+    return render_template("delete_thread.html", thread = thread_record, topic = topic_record)
+
+
 @app.route("/topics/<topic_text_id>/<thread_id>/new_reply", methods=["get", "post"])
 @login_required
 @csrf_protected
@@ -167,6 +201,12 @@ def new_reply(topic_text_id, thread_id):
     if request.method == "POST":
         user_id = session.get("user_id")
         content = request.form["reply"]
+        if len(content) < 1:
+            flash("Reply too short", "error")
+            return render_template("new_reply.html", topic=topic_record, thread=thread_record)
+        elif len(content) > 1000:
+            flash("Reply too long", "error")
+            return render_template("new_reply.html", topic=topic_record, thread=thread_record)
         replies.create_reply(thread_id, user_id, content)
         flash("Reply sent")
         return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id))
@@ -262,4 +302,4 @@ def forbidden(e):
     """
     Function for rendering error template when running into a 403 error.
     """
-    return render_template('error.html', error_message="Access forbidden"), 403
+    return render_template('error.html', error_message=e), 403

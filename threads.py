@@ -40,6 +40,20 @@ def change_thread_title(thread_id, title):
     db.session.commit()
 
 
+def remove_thread(thread_id):
+    """
+    A function for removing a thread.
+    """
+    sql = text("""
+               DELETE FROM threads
+               WHERE id = :thread_id;
+               """)
+    
+    db.session.execute(sql, {"thread_id": thread_id})
+
+    db.session.commit()
+
+
 def get_threads(topic):
     """Get threads from a given topic."""
     sql = text("""
