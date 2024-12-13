@@ -105,6 +105,23 @@ def new_topic():
     return render_template("new_topic.html")
 
 
+@app.route("/topics/<topic_text_id>/delete_topic", methods=["get", "post"])
+@admin_only
+@login_required
+@csrf_protected
+def delete_topic(topic_text_id):
+    """A function for handling delete topic route."""
+    topic_record = topics.get_topic_by_text_id(topic_text_id)
+    topic_id = topic_record.id
+
+    if request.method == "POST":
+        threads.remove_threads_with_topic_id(topic_id)
+        topics.remove_topic_with_topic_id(topic_id)
+        flash(f'Topic {topic_record.title} with id {topic_id} removed')
+        return redirect(url_for('index'))
+    return render_template("delete_topic.html", topic=topic_record)
+
+
 @app.route("/topics/<topic_text_id>/<thread_id>")
 def view_thread(topic_text_id, thread_id):
     """

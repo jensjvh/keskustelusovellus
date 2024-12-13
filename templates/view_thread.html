@@ -4,23 +4,20 @@
 <div class="container">
     <div class="row min-height: 100vh;">
         <div class="col-lg-3 mb-2 d-flex flex-column justify-content-center align-items-left">
-            <h1>Subject: {{ thread.title }}</h1>
+            <h1>{{ thread.title }}</h1>
         </div>
-        {% if session.username %}
-            <div class="col-lg-2 mb-2 d-flex flex-column justify-content-center align-items-center">
-                <a href="{{ thread.id }}/new_reply" class="btn btn-primary">Reply</a>
-            </div>
+
+        <div class="col-lg-5 mb-2 d-flex justify-content-center align-items-center">
+            {% if session.username %}
+                <a href="{{ thread.id }}/new_reply" class="btn btn-primary me-2">Reply</a>
             {% if session.username == thread.username  or session.is_admin %}
-                <div class="col-lg-1 mb-2 d-flex flex-column justify-content-center align-items-center">
-                    <a href="{{ thread.id }}/edit_thread" class="btn btn-primary">Edit</a>
-                </div>
+                <a href="{{ thread.id }}/edit_thread" class="btn btn-primary me-2">Edit</a>
             {% endif %}
             {% if session.is_admin %}
-                <div class="col-lg-1 mb-2 d-flex flex-column justify-content-center align-items-center">
-                    <a href="{{ thread.id }}/delete_thread" class="btn btn-primary">Delete</a>
-                </div>
+                <a href="{{ thread.id }}/delete_thread" class="btn btn-danger">Delete</a>
             {% endif %}
         {% endif %}
+        </div>
     </div>
     <div class="row">
         <div class="col-lg-8 mb-2">

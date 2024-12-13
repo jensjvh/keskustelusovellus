@@ -51,6 +51,31 @@ def change_thread_title(thread_id, title):
     db.session.commit()
 
 
+def remove_threads_with_topic_id(topic_id):
+    """Delete all threads and their replies with the given topic id."""
+    thread_ids_sql = text("""
+        SELECT id FROM threads
+        WHERE topic_id = :topic_id;
+    """)
+    thread_ids_result = db.session.execute(thread_ids_sql, {"topic_id": topic_id})
+    thread_ids = [row.id for row in thread_ids_result.fetchall()]
+
+    for thread_id in thread_ids:
+        delete_replies_sql = text("""
+            DELETE FROM replies
+            WHERE thread_id = :thread_id;
+        """)
+        db.session.execute(delete_replies_sql, {"thread_id": thread_id})
+
+    delete_threads_sql = text("""
+        DELETE FROM threads
+        WHERE topic_id = :topic_id;
+    """)
+    db.session.execute(delete_threads_sql, {"topic_id": topic_id})
+
+    db.session.commit()
+
+
 def remove_thread(thread_id):
     """
     A function for removing a thread.

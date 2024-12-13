@@ -31,6 +31,20 @@ def create_topic(text_id, title, description):
     db.session.commit()
 
 
+def remove_topic_with_topic_id(topic_id):
+    """
+    Remove a topic with given id.
+    """
+    sql = text("""
+               DELETE FROM topics
+               WHERE id = :topic_id;
+               """)
+
+    db.session.execute(sql, {"topic_id": topic_id})
+
+    db.session.commit()
+
+
 def get_topics():
     """
     Get all existing topics. Convert the created time to readable format.

@@ -5,12 +5,17 @@
     <div class="row min-height: 100vh;">
         <div class="col-lg-3 mb-2 d-flex flex-column justify-content-center align-items-left">
             <h1>{{ topic.title }}</h1>
+            <small class="text-muted">{{ topic.description }}</small>
         </div>
-        <div class="col-lg-2 mb-2 d-flex flex-column justify-content-center align-items-center">
+        <div class="col-lg-5 mb-2 d-flex justify-content-center align-items-center">
             {% if session.username %}
-                <a href="{{ topic.text_id }}/new_thread" class="btn btn-primary">New Thread</a>
+                <a href="{{ topic.text_id }}/new_thread" class="btn btn-primary me-2">New Thread</a>
             {% endif %}
-        </div>
+            {% if session.is_admin %}
+                <a href="{{ topic.text_id }}/edit_topic" class="btn btn-primary me-2">Edit</a>
+                <a href="{{ topic.text_id }}/delete_topic" class="btn btn-danger">Delete</a>
+            {% endif %}
+        </div>        
     </div>
     <div class="row">
         <div class="col-lg-8 mb-3">
