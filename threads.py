@@ -57,7 +57,8 @@ def remove_threads_with_topic_id(topic_id):
         SELECT id FROM threads
         WHERE topic_id = :topic_id;
     """)
-    thread_ids_result = db.session.execute(thread_ids_sql, {"topic_id": topic_id})
+    thread_ids_result = db.session.execute(
+        thread_ids_sql, {"topic_id": topic_id})
     thread_ids = [row.id for row in thread_ids_result.fetchall()]
 
     for thread_id in thread_ids:

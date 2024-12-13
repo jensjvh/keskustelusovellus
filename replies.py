@@ -73,6 +73,7 @@ def get_matching_replies(query):
 
     return formatted_replies
 
+
 def format_replies(replies):
     formatted_replies = []
 
@@ -91,6 +92,7 @@ def format_replies(replies):
 
     return formatted_replies
 
+
 def validate_reply(reply):
     if len(reply) > REPLY_MAX_LENGTH or len(reply) < REPLY_MIN_LENGTH:
         return False
@@ -107,6 +109,7 @@ def remove_replies_with_thread_id(thread_id):
     db.session.execute(sql, {"thread_id": thread_id})
 
     db.session.commit()
+
 
 def create_reply(thread_id, user_id, content):
     """Create a new reply."""
