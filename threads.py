@@ -9,9 +9,11 @@ MAX_TITLE_LENGTH = 50
 
 
 def validate_title(title):
+    """Validate thread title length."""
     if len(title) > MAX_TITLE_LENGTH or len(title) < MIN_TITLE_LENGTH:
         return False
     return True
+
 
 def create_thread(topic_id, user_id, title):
     """
@@ -42,7 +44,7 @@ def change_thread_title(thread_id, title):
                SET title = :title
                WHERE id = :thread_id;
                """)
-    
+
     db.session.execute(sql, {"title": title,
                              "thread_id": thread_id})
 
@@ -57,7 +59,7 @@ def remove_thread(thread_id):
                DELETE FROM threads
                WHERE id = :thread_id;
                """)
-    
+
     db.session.execute(sql, {"thread_id": thread_id})
 
     db.session.commit()
@@ -89,14 +91,15 @@ def get_threads(topic):
     for thread in threads:
         new_thread = {'id': thread.id,
                       'title': thread.title,
-                     'topic_id': thread.topic_id,
-                     'user_id': thread.user_id,
-                     'created_time': thread.created_time,
-                     'updated_time': thread.updated_time,
-                     'replies': thread.replies,
-                     }
+                      'topic_id': thread.topic_id,
+                      'user_id': thread.user_id,
+                      'created_time': thread.created_time,
+                      'updated_time': thread.updated_time,
+                      'replies': thread.replies,
+                      }
         if thread.last_reply:
-            new_thread['last_reply'] = thread.last_reply.strftime("%Y.%m.%d at %H:%M:%S")
+            new_thread['last_reply'] = thread.last_reply.strftime(
+                "%Y.%m.%d at %H:%M:%S")
         else:
             new_thread['last_reply'] = 'No replies'
 
@@ -106,6 +109,7 @@ def get_threads(topic):
 
 
 def get_threads_by_user(user_id):
+    """Get all threads with given user id."""
     sql = text("""
         SELECT Th.id, Th.title, Th.created_time, Th.updated_time, T.text_id as topic_text_id
         FROM threads Th

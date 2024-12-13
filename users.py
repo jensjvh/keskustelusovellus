@@ -1,8 +1,26 @@
 """Module for handling database functionalities related to users"""
 from flask import session
-from db import db
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError
+
+from db import db
+
+
+MIN_USERNAME_LENGTH = 2
+MAX_USERNAME_LENGTH = 15
+MIN_PASSWORD_LENGTH = 8
+
+
+def validate_credentials(username, password):
+    """Validate length of username and password, and the format of username."""
+    if not username.isalnum():
+        return False
+    if len(username) < MIN_USERNAME_LENGTH or len(username) > MAX_USERNAME_LENGTH:
+        return False
+    if len(password) < MIN_PASSWORD_LENGTH:
+        return False
+    return True
 
 
 def login(username, password):
@@ -20,6 +38,7 @@ def login(username, password):
         set_last_login(user.id)
         return True
     return False
+
 
 def get_user_by_username(username):
     """Get user with the given username."""
@@ -48,6 +67,7 @@ def register(username, password):
         db.session.execute(
             sql, {"username": username, "password_hash": password_hash})
         db.session.commit()
-    except:
+    except IntegrityError:
+        db.session.rollback()
         return False
     return login(username, password)

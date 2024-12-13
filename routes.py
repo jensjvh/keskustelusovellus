@@ -33,6 +33,7 @@ def admin_only(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
 def csrf_protected(f):
     """Decorator for protecting routes against CSRF attacks."""
     @wraps(f)
@@ -48,6 +49,7 @@ def csrf_protected(f):
 
 
 def generate_csrf_token():
+    """Generate a csrf token."""
     if 'csrf_token' not in session:
         session['csrf_token'] = secrets.token_hex(16)
     return session['csrf_token']
@@ -79,6 +81,28 @@ def view_threads(topic_text_id):
     threads_data = threads.get_threads(topic.id)
 
     return render_template("threads.html", topic=topic, threads=threads_data)
+
+
+@app.route("/new_topic", methods=["get", "post"])
+@admin_only
+@login_required
+@csrf_protected
+def new_topic():
+    """A function for handling new topic route."""
+    if request.method == "POST":
+        topic_text_id = request.form["topic_text_id"]
+        topic_title = request.form["topic_title"]
+        description = request.form["topic_description"]
+
+        if topics.validate_title(topic_title) is False:
+            flash("Invalid title length", "error")
+            return redirect(url_for('new_topic'))
+
+        topics.create_topic(topic_text_id, topic_title, description)
+        flash("Topic created successfully!", "message")
+        return redirect(url_for('index'))
+
+    return render_template("new_topic.html")
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>")
@@ -120,11 +144,11 @@ def new_thread(topic_text_id):
         title = request.form["title"]
         starting_reply = request.form["starting_reply"]
 
-        if threads.validate_title(title) == False:
+        if threads.validate_title(title) is False:
             flash("Invalid title length", "error")
             return redirect(url_for('new_thread', topic_text_id=topic_text_id))
 
-        elif replies.validate_reply(starting_reply) == False:
+        if replies.validate_reply(starting_reply) is False:
             flash("Invalid starting reply length", "error")
             return redirect(url_for('new_thread', topic_text_id=topic_text_id))
 
@@ -158,14 +182,17 @@ def edit_thread(topic_text_id, thread_id):
     if request.method == "POST":
         new_title = request.form["title"]
 
-        if threads.validate_title(new_title) == False:
+        if threads.validate_title(new_title) is False:
             flash("Invalid length for new title", "error")
-            return redirect(url_for('edit_thread', topic_text_id=topic_text_id, thread_id = thread_id))
+            return redirect(url_for('edit_thread',
+                                    topic_text_id=topic_text_id,
+                                    thread_id=thread_id))
 
         threads.change_thread_title(thread_id, new_title)
-        flash(f'Thread title changed from "{thread_record.title}" to "{new_title}"')
-        return redirect(url_for('view_thread', topic_text_id = topic_text_id, thread_id = thread_id))
-    return render_template("edit_thread.html", thread = thread_record, topic = topic_record)
+        flash(
+            f'Thread title changed from "{thread_record.title}" to "{new_title}"')
+        return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id))
+    return render_template("edit_thread.html", thread=thread_record, topic=topic_record)
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>/delete_thread", methods=["get", "post"])
@@ -190,7 +217,7 @@ def delete_thread(topic_text_id, thread_id):
         threads.remove_thread(thread_id)
         flash(f'Thread {thread_record.title} with id {thread_id} removed')
         return redirect(url_for('view_threads', topic_text_id=topic_text_id))
-    return render_template("delete_thread.html", thread = thread_record, topic = topic_record)
+    return render_template("delete_thread.html", thread=thread_record, topic=topic_record)
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>/new_reply", methods=["get", "post"])
@@ -213,13 +240,14 @@ def new_reply(topic_text_id, thread_id):
     if request.method == "POST":
         user_id = session.get("user_id")
         content = request.form["reply"]
-        if replies.validate_reply(content) == False:
+        if replies.validate_reply(content) is False:
             flash("Invalid reply length", "error")
             return render_template("new_reply.html", topic=topic_record, thread=thread_record)
         replies.create_reply(thread_id, user_id, content)
         flash("Reply sent")
         return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id))
     return render_template("new_reply.html", topic=topic_record, thread=thread_record)
+
 
 @app.route("/profile")
 @login_required
@@ -229,7 +257,11 @@ def profile():
     user_data = users.get_user_by_username(username)
     user_threads = threads.get_threads_by_user(user_data.id)
     user_replies = replies.get_replies_by_user(user_data.id)
-    return render_template("profile.html", user=user_data, threads=user_threads, replies=user_replies)
+    return render_template("profile.html",
+                           user=user_data,
+                           threads=user_threads,
+                           replies=user_replies)
+
 
 @app.route("/search", methods=["get", "post"])
 @csrf_protected
@@ -241,6 +273,7 @@ def search():
         return render_template("search_results.html", query=query, query_result=query_result)
     return render_template("search.html")
 
+
 @app.route("/register", methods=["get", "post"])
 @csrf_protected
 def register():
@@ -250,18 +283,20 @@ def register():
     # Check if user is already logged in
     if 'username' in session:
         return index()
-    if request.method == "GET":
-        return render_template("register.html")
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        if users.validate_credentials(username, password) is False:
+            flash("Invalid credentials", "error")
+            return redirect(url_for("register"))
+
         if users.register(username, password):
             session["username"] = username
             session["csrf_token"] = generate_csrf_token()
             flash("Registration successful, welcome!", "message")
-            return redirect("/")
+            return redirect(url_for("index"))
         flash("Invalid username or password", "error")
-        return render_template("register.html")
+    return render_template("register.html")
 
 
 @app.route("/login", methods=["get", "post"])
@@ -271,9 +306,7 @@ def login():
     """
     # Check if user is already logged in
     if 'username' in session:
-        return index()
-    if request.method == "GET":
-        return render_template("login.html")
+        return redirect(url_for("index"))
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -281,9 +314,9 @@ def login():
             session["username"] = username
             session["csrf_token"] = generate_csrf_token()
             flash("Logged in successfully!", "message")
-            return redirect("/")
+            return redirect(url_for("index"))
         flash("Incorrect username or password", "error")
-        return render_template("login.html")
+    return render_template("login.html")
 
 
 @app.route("/logout")
@@ -296,7 +329,7 @@ def logout():
     del session["is_admin"]
     del session["csrf_token"]
     flash("Logged out", "message")
-    return redirect("/")
+    return redirect(url_for('index'))
 
 
 @app.errorhandler(404)
@@ -305,6 +338,7 @@ def page_not_found(e):
     Function for rendering error template when running into a 404 error.
     """
     return render_template('error.html', error_message="Page not found"), 404
+
 
 @app.errorhandler(403)
 def forbidden(e):
