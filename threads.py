@@ -4,6 +4,15 @@ from sqlalchemy import text
 from db import db
 
 
+MIN_TITLE_LENGTH = 1
+MAX_TITLE_LENGTH = 50
+
+
+def validate_title(title):
+    if len(title) > MAX_TITLE_LENGTH or len(title) < MIN_TITLE_LENGTH:
+        return False
+    return True
+
 def create_thread(topic_id, user_id, title):
     """
     A function for creating a thread with the given

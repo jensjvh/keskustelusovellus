@@ -118,8 +118,15 @@ def new_thread(topic_text_id):
     if request.method == "POST":
         user_id = session.get("user_id")
         title = request.form["title"]
-
         starting_reply = request.form["starting_reply"]
+
+        if threads.validate_title(title) == False:
+            flash("Invalid title length", "error")
+            return redirect(url_for('new_thread', topic_text_id=topic_text_id))
+
+        elif replies.validate_reply(starting_reply) == False:
+            flash("Invalid starting reply length", "error")
+            return redirect(url_for('new_thread', topic_text_id=topic_text_id))
 
         created_thread_id = threads.create_thread(topic_id, user_id, title)
         replies.create_reply(created_thread_id, user_id, starting_reply)
@@ -144,16 +151,21 @@ def edit_thread(topic_text_id, thread_id):
     thread_record = threads.get_thread(thread_id)
     thread_id = thread_record.id
 
-    if thread_record.user_id != session.get("user_id"):
+    if thread_record.user_id != session.get("user_id") and not session.get("is_admin", False):
         flash("You do not have permission to edit this thread", "error")
         return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id))
 
     if request.method == "POST":
         new_title = request.form["title"]
+
+        if threads.validate_title(new_title) == False:
+            flash("Invalid length for new title", "error")
+            return redirect(url_for('edit_thread', topic_text_id=topic_text_id, thread_id = thread_id))
+
         threads.change_thread_title(thread_id, new_title)
         flash(f'Thread title changed from "{thread_record.title}" to "{new_title}"')
-        return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id = thread_id))
-    return render_template("edit_thread.html", thread = thread_record,topic=topic_record)
+        return redirect(url_for('view_thread', topic_text_id = topic_text_id, thread_id = thread_id))
+    return render_template("edit_thread.html", thread = thread_record, topic = topic_record)
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>/delete_thread", methods=["get", "post"])
@@ -201,11 +213,8 @@ def new_reply(topic_text_id, thread_id):
     if request.method == "POST":
         user_id = session.get("user_id")
         content = request.form["reply"]
-        if len(content) < 1:
-            flash("Reply too short", "error")
-            return render_template("new_reply.html", topic=topic_record, thread=thread_record)
-        elif len(content) > 1000:
-            flash("Reply too long", "error")
+        if replies.validate_reply(content) == False:
+            flash("Invalid reply length", "error")
             return render_template("new_reply.html", topic=topic_record, thread=thread_record)
         replies.create_reply(thread_id, user_id, content)
         flash("Reply sent")

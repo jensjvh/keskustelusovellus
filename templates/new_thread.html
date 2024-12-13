@@ -12,8 +12,8 @@
                     <form action="{{ url_for('new_thread', topic_text_id=topic.text_id) }}" method="post">
                         <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
                         <div class="form-group">
-                          <small id="titleHelp" class="form-text text-muted">Enter a valid title.</small>
-                          <input type="title" class="form-control" name="title" id="titleInput" aria-describedby="titleHelp" placeholder="Thread Title">     
+                          <small id="titleHelp" class="form-text text-muted">Enter a title with 1-50 characters.</small>
+                          <input type="title" class="form-control" name="title" id="titleInput" minlength="1" maxlength="50" aria-describedby="titleHelp" placeholder="Thread Title">     
                         </div>
                         <div class="form-group">
                           <small id="startreplyHelp" class="form-text text-muted">The starting reply should contain at least 1 character, and less than 1000 characters.</small>

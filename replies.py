@@ -4,6 +4,10 @@ from sqlalchemy import text
 from db import db
 
 
+REPLY_MIN_LENGTH = 1
+REPLY_MAX_LENGTH = 1000
+
+
 def get_replies(thread_id):
     """Get replies from a specific thread."""
     sql = text("""
@@ -86,6 +90,12 @@ def format_replies(replies):
         formatted_replies.append(formatted_reply)
 
     return formatted_replies
+
+def validate_reply(reply):
+    if len(reply) > REPLY_MAX_LENGTH or len(reply) < REPLY_MIN_LENGTH:
+        return False
+    return True
+
 
 def remove_replies_with_thread_id(thread_id):
     """Delete all replies with given thread id."""
