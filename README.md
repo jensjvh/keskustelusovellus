@@ -40,7 +40,7 @@ SECRET_KEY=<salainen-avain>
  - [ ] Käyttäjä voi tykätä viesteistä, ja nähdä profiilisivullaan omat ketjunsa, viestinsä ja tykätyt viestit.
  - [x] Käyttäjä voi etsiä kaikki viestit, joiden osana on annettu sana.
  - [x] Ylläpitäjä voi lisätä ja poistaa keskustelualueita.
- - [ ] Ylläpitäjä voi luoda salaisen alueen ja määrittää, keillä käyttäjillä on pääsy alueelle.
+ - [ ] Ylläpitäjä voi luoda salaisen alueen, jonka näkevät vain ylläpitäjät.
 
 ## Käyttöohjeet
 
