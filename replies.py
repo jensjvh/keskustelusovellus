@@ -87,7 +87,7 @@ def format_replies(replies):
             'id': reply.id,
             'username': reply.username,
             'content': reply.content.split("\n"),
-            'created_time': reply.created_time.strftime("%d.%m.%Y at %H:%M:%S"),
+            'created_time': reply.created_time,
             'thread_title': getattr(reply, 'thread_title', None),
             'thread_id': getattr(reply, 'thread_id', None),
             'topic_title': getattr(reply, 'topic_title', None),
