@@ -8,20 +8,25 @@ REPLY_MIN_LENGTH = 1
 REPLY_MAX_LENGTH = 1000
 
 
-def get_replies(thread_id):
+def get_replies(thread_id, user_id):
     """Get replies from a specific thread."""
     sql = text("""
             SELECT R.id as id,
                    U.username as username,
                    R.content as content,
-                   R.created_time as created_time
+                   R.created_time as created_time,
+                   (SELECT COUNT(*) FROM likes L
+                   WHERE L.reply_id = R.id) as likes,
+                   EXISTS (SELECT 1 FROM likes L
+                   WHERE L.user_id = :user_id AND L.reply_id = R.id) as has_liked
             FROM replies R
             INNER JOIN threads Th ON Th.id = R.thread_id
             INNER JOIN users U on R.user_id = U.id
             WHERE R.thread_id = :thread_id
             ORDER BY R.created_time ASC;""")
 
-    result = db.session.execute(sql, {"thread_id": thread_id})
+    result = db.session.execute(sql, {"thread_id": thread_id,
+                                      "user_id": user_id})
 
     replies = result.fetchall()
 
@@ -86,7 +91,9 @@ def format_replies(replies):
             'thread_title': getattr(reply, 'thread_title', None),
             'thread_id': getattr(reply, 'thread_id', None),
             'topic_title': getattr(reply, 'topic_title', None),
-            'topic_text_id': getattr(reply, 'topic_text_id', None)
+            'topic_text_id': getattr(reply, 'topic_text_id', None),
+            'likes': getattr(reply, 'likes', None),
+            'has_liked': getattr(reply, 'has_liked', None)
         }
         formatted_replies.append(formatted_reply)
 

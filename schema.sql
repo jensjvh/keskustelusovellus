@@ -23,7 +23,7 @@ CREATE TABLE topics (
 
 CREATE TABLE threads (
     id SERIAL PRIMARY KEY,
-    topic_id INTEGER REFERENCES topics(id),
+    topic_id INTEGER REFERENCES topics(id) ON DELETE CASCADE,
     user_id INTEGER REFERENCES users(id),
     title VARCHAR(100) NOT NULL,
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -32,7 +32,7 @@ CREATE TABLE threads (
 
 CREATE TABLE replies (
     id SERIAL PRIMARY KEY,
-    thread_id INTEGER REFERENCES threads(id),
+    thread_id INTEGER REFERENCES threads(id) ON DELETE CASCADE,
     user_id INTEGER REFERENCES users(id),
     content TEXT NOT NULL,
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -42,6 +42,7 @@ CREATE TABLE replies (
 CREATE TABLE likes (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
-    reply_id INTEGER REFERENCES replies(id),
-    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    reply_id INTEGER REFERENCES replies(id) ON DELETE CASCADE,
+    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (user_id, reply_id)
 );

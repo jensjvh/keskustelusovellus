@@ -11,6 +11,7 @@ import users
 import topics
 import threads
 import replies
+import likes
 
 
 def login_required(f):
@@ -115,7 +116,6 @@ def delete_topic(topic_text_id):
     topic_id = topic_record.id
 
     if request.method == "POST":
-        threads.remove_threads_with_topic_id(topic_id)
         topics.remove_topic_with_topic_id(topic_id)
         flash(f'Topic {topic_record.title} with id {topic_id} removed')
         return redirect(url_for('index'))
@@ -132,9 +132,10 @@ def view_thread(topic_text_id, thread_id):
     topic_text_id (str): String id of the topic.
     thread_id (int): id of the thread.
     """
+    user_id = session.get("user_id")
     thread_data = threads.get_thread(thread_id)
     topic_data = topics.get_topic_by_text_id(topic_text_id)
-    reply_data = replies.get_replies(thread_id)
+    reply_data = replies.get_replies(thread_id, user_id)
 
     return render_template("view_thread.html",
                            thread=thread_data,
@@ -230,7 +231,6 @@ def delete_thread(topic_text_id, thread_id):
     thread_id = thread_record.id
 
     if request.method == "POST":
-        replies.remove_replies_with_thread_id(thread_id)
         threads.remove_thread(thread_id)
         flash(f'Thread {thread_record.title} with id {thread_id} removed')
         return redirect(url_for('view_threads', topic_text_id=topic_text_id))
@@ -266,6 +266,26 @@ def new_reply(topic_text_id, thread_id):
     return render_template("new_reply.html", topic=topic_record, thread=thread_record)
 
 
+@app.route("/like_reply/<int:reply_id>", methods=["POST"])
+@login_required
+@csrf_protected
+def like_reply(reply_id):
+    """Handle liking a reply."""
+    user_id = session.get("user_id")
+    likes.like_reply(user_id, reply_id)
+    return redirect(request.referrer)
+
+
+@app.route("/unlike_reply/<int:reply_id>", methods=["POST"])
+@login_required
+@csrf_protected
+def unlike_reply(reply_id):
+    """Handle unliking a reply."""
+    user_id = session.get("user_id")
+    likes.unlike_reply(user_id, reply_id)
+    return redirect(request.referrer)
+
+
 @app.route("/profile")
 @login_required
 def profile():
@@ -274,10 +294,12 @@ def profile():
     user_data = users.get_user_by_username(username)
     user_threads = threads.get_threads_by_user(user_data.id)
     user_replies = replies.get_replies_by_user(user_data.id)
+    user_likes = likes.get_likes_by_user(user_data.id)
     return render_template("profile.html",
                            user=user_data,
                            threads=user_threads,
-                           replies=user_replies)
+                           replies=user_replies,
+                           likes=user_likes)
 
 
 @app.route("/search", methods=["get", "post"])

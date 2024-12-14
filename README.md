@@ -37,7 +37,7 @@ SECRET_KEY=<salainen-avain>
  - [x] Käyttäjä voi luoda alueelle uuden ketjun antamalla ketjun otsikon ja aloitusviestin sisällön.
  - [x] Käyttäjä voi kirjoittaa uuden viestin olemassa olevaan ketjuun.
  - [ ] Käyttäjä voi muokata luomansa ketjun otsikkoa sekä lähettämänsä viestin sisältöä. Viestejä ja ketjuja voi poistaa vain ylläpitäjä.
- - [ ] Käyttäjä voi tykätä viesteistä, ja nähdä profiilisivullaan omat ketjunsa, viestinsä ja tykätyt viestit.
+ - [x] Käyttäjä voi tykätä viesteistä, ja nähdä profiilisivullaan omat ketjunsa, viestinsä ja tykätyt viestit.
  - [x] Käyttäjä voi etsiä kaikki viestit, joiden osana on annettu sana.
  - [x] Ylläpitäjä voi lisätä ja poistaa keskustelualueita.
  - [ ] Ylläpitäjä voi luoda salaisen alueen, jonka näkevät vain ylläpitäjät.
