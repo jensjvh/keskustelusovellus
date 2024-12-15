@@ -16,7 +16,7 @@
                 <small class="text-muted">
                     In thread: <a href="{{ url_for('view_thread', topic_text_id=like.topic_text_id, thread_id=like.thread_id) }}">{{ like.thread_title }}</a>
                     <br>
-                    In topic: <a href="{{ url_for('view_threads', topic_text_id=like.topic_text_id) }}">{{ like.topic_title }}</a>
+                    In {% if like.topic_is_hidden %}hidden{% endif %} topic: <a href="{{ url_for('view_threads', topic_text_id=like.topic_text_id) }}">{{ like.topic_title }}</a>
                 </small>
             </li>
         {% endfor %}
@@ -28,6 +28,10 @@
             <li class="list-group-item">
                 <a href="{{ url_for('view_thread', topic_text_id=thread.topic_text_id, thread_id=thread.id) }}">{{ thread.title }}</a>
                 <small class="text-muted">{{ thread.created_time.strftime('%B %d, %Y %I:%M %p') }}</small>
+                <br>
+                <small class="text-muted">
+                In {% if thread.topic_is_hidden %}hidden{% endif %} topic: <a href="{{ url_for('view_threads', topic_text_id=thread.topic_text_id) }}">{{ thread.topic_title }}</a>
+                </small>
             </li>
         {% endfor %}
     </ul>
@@ -42,7 +46,7 @@
                 <small class="text-muted">
                     In thread: <a href="{{ url_for('view_thread', topic_text_id=reply.topic_text_id, thread_id=reply.thread_id) }}">{{ reply.thread_title }}</a>
                     <br>
-                    In topic: <a href="{{ url_for('view_threads', topic_text_id=reply.topic_text_id) }}">{{ reply.topic_title }}</a>
+                    In {% if reply.topic_is_hidden %}hidden{% endif %} topic: <a href="{{ url_for('view_threads', topic_text_id=reply.topic_text_id) }}">{{ reply.topic_title }}</a>
                 </small>
             </li>
         {% endfor %}

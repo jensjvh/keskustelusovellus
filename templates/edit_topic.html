@@ -6,22 +6,22 @@
         <div class="col-md-6 offset-md-3">
             <div class="card">
                 <div class="card-header">
-                    Create topic
+                    Edit topic
                 </div>
                 <div class="card-body">
                     <form action="{{ url_for('new_topic') }}" method="post">
                         <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
                         <div class="form-group">
-                            <small id="textidHelp" class="form-text text-muted">Enter the text id you want to appear in the topic URL with 1-25 characters (eg. text_id).<br>Should only contain characters from [a-z, A-Z, 0-9, - _ . ~]</small>
-                            <input type="topic_text_id" class="form-control" name="topic_text_id" id="textidInput" minlength="1" maxlength="25" aria-describedby="textidHelp" placeholder="Topic Text id">     
+                            <small id="textidHelp" class="form-text text-muted">Enter the new text id you want to appear in the topic URL with 1-25 characters (eg. text_id).<br>Should only contain characters from [a-z, A-Z, 0-9, - _ . ~]</small>
+                            <input type="topic_text_id" class="form-control" name="topic_text_id" id="textidInput" minlength="1" maxlength="25" aria-describedby="textidHelp" placeholder="{{ topic.text_id }}">     
                           </div>
                         <div class="form-group">
-                          <small id="topictitleHelp" class="form-text text-muted">Enter a title for the topic with 1-25 characters.</small>
-                          <input type="topic_title" class="form-control" name="topic_title" id="topictitleInput" minlength="1" maxlength="25" aria-describedby="topictitleHelp" placeholder="Topic Title">     
+                          <small id="topictitleHelp" class="form-text text-muted">Enter a new title for the topic with 1-25 characters.</small>
+                          <input type="new_title" class="form-control" name="new_title" id="topictitleInput" minlength="1" maxlength="25" aria-describedby="topictitleHelp" placeholder="{{ topic.title }}">     
                         </div>
                         <div class="form-group">
                             <small id="topicdescHelp" class="form-text text-muted">Enter a description for the topic with 1-50 characters.</small>
-                            <textarea type="topic_description" class="form-control" name="topic_description" id="topicdescInput" minlength="1" maxlength="50" rows="2" aria-describedby="topicdescHelp" placeholder="Topic Description"></textarea>
+                            <textarea type="topic_description" class="form-control" name="topic_description" id="topicdescInput" minlength="1" maxlength="50" rows="2" aria-describedby="topicdescHelp" placeholder="{{ topic.description }}"></textarea>
                           </div>
                         <div class="form-group form-check">
                         <input type="checkbox" class="form-check-input" name="is_hidden" id="isHiddenCheck">

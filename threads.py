@@ -137,7 +137,12 @@ def get_threads(topic):
 def get_threads_by_user(user_id):
     """Get all threads with given user id."""
     sql = text("""
-        SELECT Th.id, Th.title, Th.created_time, Th.updated_time, T.text_id as topic_text_id
+        SELECT Th.id, Th.title,
+               Th.created_time,
+               Th.updated_time,
+               T.title as topic_title,
+               T.text_id as topic_text_id,
+               T.is_hidden as topic_is_hidden
         FROM threads Th
         INNER JOIN topics T ON Th.topic_id = T.id
         WHERE Th.user_id = :user_id

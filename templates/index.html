@@ -21,6 +21,9 @@
                             <th scope="col">Threads</th>
                             <th scope="col">Replies</th>
                             <th scope="col">Last reply</th>
+                            {% if session.is_admin %}
+                                <th scope="col">Hidden</th>
+                            {% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -33,7 +36,10 @@
                             </td>
                             <td>{{ topic.threads}}</td>
                             <td>{{ topic.replies }}</td>
-                            <td>{{ topic.last_reply }}
+                            <td>{{ topic.last_reply }}</td>
+                            {% if session.is_admin %}
+                                <td>{{ topic.is_hidden }}</td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                     </tbody>

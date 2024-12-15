@@ -55,17 +55,18 @@ def validate_description(description):
     return True
 
 
-def create_topic(text_id, title, description):
+def create_topic(text_id, title, description, is_hidden=False):
     """
     Create a new topic.
     """
     sql = text(
-        """INSERT INTO topics (text_id, title, description)
-                   VALUES (:text_id, :title, :description);"""
+        """INSERT INTO topics (text_id, title, description, is_hidden)
+                   VALUES (:text_id, :title, :description, :is_hidden);"""
     )
     db.session.execute(sql, {"text_id": text_id,
                              "title": title,
-                             "description": description})
+                             "description": description,
+                             "is_hidden": is_hidden})
     db.session.commit()
 
 
@@ -83,15 +84,55 @@ def remove_topic_with_topic_id(topic_id):
     db.session.commit()
 
 
-def get_topics():
+def get_visible_topics():
     """
-    Get all existing topics. Convert the created time to readable format.
+    Get all visible topics. Convert the created time to readable format.
     """
     sql = text("""
         SELECT T.title AS title, T.text_id AS text_id,
                COUNT(DISTINCT Th.id) AS threads,
                COUNT(R.id) AS replies,
                MAX(R.created_time) AS last_reply
+        FROM Topics T
+        LEFT JOIN Threads Th ON T.id = Th.topic_id
+        LEFT JOIN Replies R ON Th.id = R.thread_id
+        WHERE T.is_hidden = FALSE
+        GROUP BY T.id
+        ORDER BY T.title;
+    """)
+    result = db.session.execute(sql)
+
+    topics = result.fetchall()
+
+    formatted_topics = []
+
+    for topic in topics:
+        new_topic = {'title': topic.title,
+                     'text_id': topic.text_id,
+                     'threads': topic.threads,
+                     'replies': topic.replies
+                     }
+        if topic.last_reply:
+            new_topic['last_reply'] = topic.last_reply.strftime(
+                "%Y.%m.%d %H:%M:%S")
+        else:
+            new_topic['last_reply'] = 'No replies'
+
+        formatted_topics.append(new_topic)
+
+    return formatted_topics
+
+
+def get_all_topics():
+    """
+    Get all topics, including hidden ones. Convert the created time to readable format.
+    """
+    sql = text("""
+        SELECT T.title AS title, T.text_id AS text_id,
+               COUNT(DISTINCT Th.id) AS threads,
+               COUNT(R.id) AS replies,
+               MAX(R.created_time) AS last_reply,
+               T.is_hidden AS is_hidden
         FROM Topics T
         LEFT JOIN Threads Th ON T.id = Th.topic_id
         LEFT JOIN Replies R ON Th.id = R.thread_id
@@ -108,7 +149,8 @@ def get_topics():
         new_topic = {'title': topic.title,
                      'text_id': topic.text_id,
                      'threads': topic.threads,
-                     'replies': topic.replies
+                     'replies': topic.replies,
+                     'is_hidden': topic.is_hidden
                      }
         if topic.last_reply:
             new_topic['last_reply'] = topic.last_reply.strftime(

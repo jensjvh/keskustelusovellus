@@ -21,7 +21,7 @@
                             <small class="text-muted">
                                 In thread: <a href="{{ url_for('view_thread', topic_text_id=result.topic_text_id, thread_id=result.thread_id) }}">{{ result.thread_title }}</a>
                                 <br>
-                                In topic: <a href="{{ url_for('view_threads', topic_text_id=result.topic_text_id) }}">{{ result.topic_title }}</a>
+                                In {% if result.is_hidden %}hidden{% endif %} topic: <a href="{{ url_for('view_threads', topic_text_id=result.topic_text_id) }}">{{ result.topic_title }}</a>
                             </small>
                         </li>
                     {% endfor %}

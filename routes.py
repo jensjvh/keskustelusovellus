@@ -35,6 +35,18 @@ def admin_only(f):
     return decorated_function
 
 
+def admin_only_if_hidden(f):
+    """Decorator for routes requiring admin if the topic is hidden."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        topic_text_id = kwargs.get('topic_text_id')
+        topic = topics.get_topic_by_text_id(topic_text_id)
+        if topic.is_hidden and not session.get('is_admin', False):
+            abort(403, description="Access restricted")
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 def csrf_protected(f):
     """Decorator for protecting routes against CSRF attacks."""
     @wraps(f)
@@ -60,7 +72,11 @@ def generate_csrf_token():
 def index():
     """Function for handling the root route."""
     generate_csrf_token()
-    return render_template("index.html", topics=topics.get_topics())
+    if session.get('is_admin'):
+        topics_data = topics.get_all_topics()
+    else:
+        topics_data = topics.get_visible_topics()
+    return render_template("index.html", topics=topics_data)
 
 
 @app.route("/topics")
@@ -70,15 +86,17 @@ def view_topics():
 
 
 @app.route("/topics/<topic_text_id>")
+@admin_only_if_hidden
 def view_threads(topic_text_id):
     """
-    Function for handling a route for a particular topic
+    Function for handling a route for a particular topic.
 
     Parameters
     ----------
     topic_text_id (str): String id of the topic.
     """
     topic = topics.get_topic_by_text_id(topic_text_id)
+
     threads_data = threads.get_threads(topic.id)
 
     return render_template("threads.html", topic=topic, threads=threads_data)
@@ -94,11 +112,13 @@ def new_topic():
         topic_text_id = request.form["topic_text_id"]
         topic_title = request.form["topic_title"]
         description = request.form["topic_description"]
+        # Get is_hidden from the form checkbox
+        is_hidden = request.form.get("is_hidden") == "on"
 
         if topics.validate_topic(topic_title, topic_text_id, description) is False:
             return redirect(url_for('new_topic'))
 
-        topics.create_topic(topic_text_id, topic_title, description)
+        topics.create_topic(topic_text_id, topic_title, description, is_hidden)
         flash("Topic created successfully!", "message")
         return redirect(url_for('index'))
 
@@ -118,13 +138,12 @@ def edit_topic(topic_text_id):
         new_text_id = request.form["new_text_id"]
         new_title = request.form["new_title"]
         new_description = request.form["description"]
-        if topics.validate_title(new_title) is False:
-            flash("Invalid title length", "error")
-            return redirect(url_for('new_topic'))
-        topics.edit_topic_with_topic_id(topic_id)
-        flash(f'Changed topic title from {topic_record.title} with id {topic_id} removed')
+        if topics.validate_topic(new_title, new_text_id, new_description) is False:
+            return redirect(url_for('edit_topic'))
+        topics.edit_topic_with_topic_id(topic_id, new_text_id, new_title, new_description)
+        flash(f'Changed topic title from {topic_record.title} to {new_title}')
         return redirect(url_for('index'))
-    return render_template("delete_topic.html", topic=topic_record)
+    return render_template("edit_topic.html", topic=topic_record)
 
 
 @app.route("/topics/<topic_text_id>/delete_topic", methods=["get", "post"])
@@ -144,6 +163,7 @@ def delete_topic(topic_text_id):
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>")
+@admin_only_if_hidden
 def view_thread(topic_text_id, thread_id):
     """
     Function for handling a route for a particular thread
@@ -165,6 +185,7 @@ def view_thread(topic_text_id, thread_id):
 
 
 @app.route("/topics/<topic_text_id>/new_thread", methods=["get", "post"])
+@admin_only_if_hidden
 @login_required
 @csrf_protected
 def new_thread(topic_text_id):
@@ -199,6 +220,7 @@ def new_thread(topic_text_id):
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>/edit_thread", methods=["get", "post"])
+@admin_only_if_hidden
 @login_required
 @csrf_protected
 def edit_thread(topic_text_id, thread_id):
@@ -259,6 +281,7 @@ def delete_thread(topic_text_id, thread_id):
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>/new_reply", methods=["get", "post"])
+@admin_only_if_hidden
 @login_required
 @csrf_protected
 def new_reply(topic_text_id, thread_id):
@@ -339,7 +362,8 @@ def search():
     """Function for handling search route."""
     if request.method == "POST":
         query = request.form["query"]
-        query_result = replies.get_matching_replies(query)
+        is_admin = session.get("is_admin", False)
+        query_result = replies.get_matching_replies(query, is_admin)
         return render_template("search_results.html", query=query, query_result=query_result)
     return render_template("search.html")
 

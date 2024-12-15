@@ -39,7 +39,8 @@ def get_replies_by_user(user_id):
     sql = text("""
         SELECT R.id as id, R.content as content, R.created_time as created_time,
                Th.title as thread_title, Th.id as thread_id,
-               T.title as topic_title, T.text_id as topic_text_id
+               T.title as topic_title, T.text_id as topic_text_id,
+               T.is_hidden as topic_is_hidden
         FROM replies R
         INNER JOIN threads Th ON R.thread_id = Th.id
         INNER JOIN topics T ON Th.topic_id = T.id
@@ -50,27 +51,49 @@ def get_replies_by_user(user_id):
     return result.fetchall()
 
 
-def get_matching_replies(query):
+def get_matching_replies(query, is_admin):
     """Get replies matching a pattern."""
-    sql = text("""
-        SELECT R.id as id,
-               U.username as username,
-               R.content as content,
-               R.created_time as created_time,
-               Th.title as thread_title,
-               Th.id as thread_id,
-               T.title as topic_title,
-               T.text_id as topic_text_id
-        FROM replies R
-        INNER JOIN users U on R.user_id = U.id
-        INNER JOIN threads Th on R.thread_id = Th.id
-        INNER JOIN topics T on Th.topic_id = T.id
-        WHERE R.content ILIKE :pattern
-        ORDER BY R.created_time ASC;
-    """)
+    if is_admin:
+        sql = text("""
+            SELECT R.id as id,
+                   U.username as username,
+                   R.content as content,
+                   R.created_time as created_time,
+                   Th.title as thread_title,
+                   Th.id as thread_id,
+                   T.title as topic_title,
+                   T.text_id as topic_text_id,
+                   T.is_hidden as is_hidden
+            FROM replies R
+            INNER JOIN users U on R.user_id = U.id
+            INNER JOIN threads Th on R.thread_id = Th.id
+            INNER JOIN topics T on Th.topic_id = T.id
+            WHERE R.content ILIKE :pattern
+            ORDER BY R.created_time ASC;
+        """)
+        params = {"pattern": f"%{query}%"}
+    else:
+        sql = text("""
+            SELECT R.id as id,
+                   U.username as username,
+                   R.content as content,
+                   R.created_time as created_time,
+                   Th.title as thread_title,
+                   Th.id as thread_id,
+                   T.title as topic_title,
+                   T.text_id as topic_text_id,
+                   T.is_hidden as is_hidden
+            FROM replies R
+            INNER JOIN users U on R.user_id = U.id
+            INNER JOIN threads Th on R.thread_id = Th.id
+            INNER JOIN topics T on Th.topic_id = T.id
+            WHERE R.content ILIKE :pattern
+            AND T.is_hidden = FALSE
+            ORDER BY R.created_time ASC;
+        """)
+        params = {"pattern": f"%{query}%"}
 
-    pattern = f"%{query}%"
-    result = db.session.execute(sql, {"pattern": pattern})
+    result = db.session.execute(sql, params)
 
     replies = result.fetchall()
 
@@ -93,7 +116,8 @@ def format_replies(replies):
             'topic_title': getattr(reply, 'topic_title', None),
             'topic_text_id': getattr(reply, 'topic_text_id', None),
             'likes': getattr(reply, 'likes', None),
-            'has_liked': getattr(reply, 'has_liked', None)
+            'has_liked': getattr(reply, 'has_liked', None),
+            'is_hidden': getattr(reply, 'is_hidden', None)
         }
         formatted_replies.append(formatted_reply)
 

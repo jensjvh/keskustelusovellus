@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS users CASCADE;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
+    username VARCHAR(15) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP,
@@ -15,8 +15,8 @@ CREATE TABLE users (
 
 CREATE TABLE topics (
     id SERIAL PRIMARY KEY,
-    text_id VARCHAR(20) UNIQUE NOT NULL,
-    title VARCHAR(100) UNIQUE NOT NULL,
+    text_id VARCHAR(25) UNIQUE NOT NULL,
+    title VARCHAR(25) UNIQUE NOT NULL,
     description TEXT,
     is_hidden BOOLEAN DEFAULT FALSE
 );
@@ -25,7 +25,7 @@ CREATE TABLE threads (
     id SERIAL PRIMARY KEY,
     topic_id INTEGER REFERENCES topics(id) ON DELETE CASCADE,
     user_id INTEGER REFERENCES users(id),
-    title VARCHAR(100) NOT NULL,
+    title VARCHAR(50) NOT NULL,
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

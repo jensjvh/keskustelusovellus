@@ -45,7 +45,7 @@ def get_likes_by_user(user_id):
         SELECT R.id as id, R.content as content, R.created_time as created_time,
                Th.title as thread_title, Th.id as thread_id,
                T.title as topic_title, T.text_id as topic_text_id,
-               U.username as reply_username
+               T.is_hidden as topic_is_hidden, U.username as reply_username
         FROM likes L
         INNER JOIN replies R ON L.reply_id = R.id
         INNER JOIN threads Th ON R.thread_id = Th.id
