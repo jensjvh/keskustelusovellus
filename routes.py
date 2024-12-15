@@ -118,7 +118,9 @@ def new_topic():
         if topics.validate_topic(topic_title, topic_text_id, description) is False:
             return redirect(url_for('new_topic'))
 
-        topics.create_topic(topic_text_id, topic_title, description, is_hidden)
+        if not topics.create_topic(topic_text_id, topic_title, description, is_hidden):
+            flash("Topic already exists!", "error")
+            return redirect(url_for('new_topic'))
         flash("Topic created successfully!", "message")
         return redirect(url_for('index'))
 
@@ -137,13 +139,16 @@ def edit_topic(topic_text_id):
     if request.method == "POST":
         new_text_id = request.form["new_text_id"]
         new_title = request.form["new_title"]
-        new_description = request.form["description"]
+        new_description = request.form["new_description"]
+        is_hidden = request.form.get("is_hidden") == "on"
         if topics.validate_topic(new_title, new_text_id, new_description) is False:
-            return redirect(url_for('edit_topic'))
-        topics.edit_topic_with_topic_id(topic_id, new_text_id, new_title, new_description)
+            return redirect(url_for('edit_topic', topic_text_id=topic_text_id))
+        if not topics.edit_topic_with_topic_id(topic_id, new_text_id, new_title, new_description, is_hidden):
+            flash(f"A topic with the title {new_title} or text id {new_text_id} already exists")
+            return redirect(url_for('edit_topic', topic_text_id=topic_text_id))
         flash(f'Changed topic title from {topic_record.title} to {new_title}')
         return redirect(url_for('index'))
-    return render_template("edit_topic.html", topic=topic_record)
+    return render_template("edit_topic.html", topic_text_id=topic_record.text_id, topic=topic_record)
 
 
 @app.route("/topics/<topic_text_id>/delete_topic", methods=["get", "post"])

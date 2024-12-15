@@ -1,6 +1,7 @@
 """A module for handling functionalities related to topics."""
 from datetime import datetime
 from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError
 from flask import flash
 
 
@@ -59,15 +60,46 @@ def create_topic(text_id, title, description, is_hidden=False):
     """
     Create a new topic.
     """
-    sql = text(
-        """INSERT INTO topics (text_id, title, description, is_hidden)
-                   VALUES (:text_id, :title, :description, :is_hidden);"""
-    )
-    db.session.execute(sql, {"text_id": text_id,
-                             "title": title,
-                             "description": description,
-                             "is_hidden": is_hidden})
-    db.session.commit()
+    try:
+        sql = text(
+            """INSERT INTO topics (text_id, title, description, is_hidden)
+                    VALUES (:text_id, :title, :description, :is_hidden);"""
+        )
+        db.session.execute(sql, {"text_id": text_id,
+                                "title": title,
+                                "description": description,
+                                "is_hidden": is_hidden})
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        return False
+    return True
+
+
+def edit_topic_with_topic_id(topic_id, text_id, title, description, is_hidden):
+    """
+    A function for changing the text id, title, 
+    description, and hiding of a topic.
+    """
+    try:
+        sql = text("""
+                UPDATE topics
+                SET text_id = :text_id,
+                title = :title,
+                description = :description,
+                is_hidden = :is_hidden
+                WHERE id = :topic_id;
+                """)
+        db.session.execute(sql, {"topic_id": topic_id,
+                                "text_id": text_id,
+                                "title": title,
+                                "description": description,
+                                "is_hidden": is_hidden})
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        return False
+    return True
 
 
 def remove_topic_with_topic_id(topic_id):
