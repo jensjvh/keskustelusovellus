@@ -1,18 +1,56 @@
 """A module for handling functionalities related to topics."""
 from datetime import datetime
 from sqlalchemy import text
+from flask import flash
 
 
 from db import db
 
 
 MIN_TITLE_LENGTH = 1
-MAX_TITLE_LENGTH = 50
+MAX_TITLE_LENGTH = 25
+MIN_TEXT_ID_LENGTH = 1
+MAX_TEXT_ID_LENGTH = 25
+MIN_DESC_LENGTH = 1
+MAX_DESC_LENGTH = 50
+VALID_TEXT_ID_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~"
+
+
+def validate_topic(title, text_id, description):
+    """Validate the parameters for a topic."""
+    if not validate_title(title):
+        flash("Invalid title length", "error")
+        return False
+    if not validate_text_id(text_id):
+        #flash("Invalid text id characters or length", "error")
+        return False
+    if not validate_description(description):
+        flash("Invalid description", "error")
+        return False
+    return True
 
 
 def validate_title(title):
     """Validate a title's length."""
     if len(title) > MAX_TITLE_LENGTH or len(title) < MIN_TITLE_LENGTH:
+        return False
+    return True
+
+
+def validate_text_id(text_id):
+    """Validate a topic text id length and characters."""
+    if len(text_id) > MAX_TEXT_ID_LENGTH or len(text_id) < MIN_TITLE_LENGTH:
+        return False
+    for c in text_id:
+        if c not in VALID_TEXT_ID_CHARACTERS:
+            flash(c, VALID_TEXT_ID_CHARACTERS)
+            return False
+    return True
+
+
+def validate_description(description):
+    """Validate a topic description length."""
+    if len(description) > MAX_DESC_LENGTH or len(description) < MIN_DESC_LENGTH:
         return False
     return True
 
@@ -92,6 +130,19 @@ def get_topic_by_title(title):
         FROM Topics WHERE title = :title;
     """)
     result = db.session.execute(sql, {"title": title})
+
+    return result.fetchone()
+
+
+def get_topic_by_id(id):
+    """
+    Function for returning the SQL query result of topic with given id.
+    """
+    sql = text("""
+        SELECT id, text_id, title, description, is_hidden
+        FROM Topics WHERE id = :id;
+    """)
+    result = db.session.execute(sql, {"id": id})
 
     return result.fetchone()
 

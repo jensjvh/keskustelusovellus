@@ -95,8 +95,7 @@ def new_topic():
         topic_title = request.form["topic_title"]
         description = request.form["topic_description"]
 
-        if topics.validate_title(topic_title) is False:
-            flash("Invalid title length", "error")
+        if topics.validate_topic(topic_title, topic_text_id, description) is False:
             return redirect(url_for('new_topic'))
 
         topics.create_topic(topic_text_id, topic_title, description)
@@ -104,6 +103,28 @@ def new_topic():
         return redirect(url_for('index'))
 
     return render_template("new_topic.html")
+
+
+@app.route("/topics/<topic_text_id>/edit_topic", methods=["get", "post"])
+@admin_only
+@login_required
+@csrf_protected
+def edit_topic(topic_text_id):
+    """A function for handling edit topic route."""
+    topic_record = topics.get_topic_by_text_id(topic_text_id)
+    topic_id = topic_record.id
+
+    if request.method == "POST":
+        new_text_id = request.form["new_text_id"]
+        new_title = request.form["new_title"]
+        new_description = request.form["description"]
+        if topics.validate_title(new_title) is False:
+            flash("Invalid title length", "error")
+            return redirect(url_for('new_topic'))
+        topics.edit_topic_with_topic_id(topic_id)
+        flash(f'Changed topic title from {topic_record.title} with id {topic_id} removed')
+        return redirect(url_for('index'))
+    return render_template("delete_topic.html", topic=topic_record)
 
 
 @app.route("/topics/<topic_text_id>/delete_topic", methods=["get", "post"])
@@ -266,24 +287,34 @@ def new_reply(topic_text_id, thread_id):
     return render_template("new_reply.html", topic=topic_record, thread=thread_record)
 
 
-@app.route("/like_reply/<int:reply_id>", methods=["POST"])
+@app.route("/like_reply/<int:thread_id>/<int:reply_id>/<int:reply_index>", methods=["POST"])
 @login_required
 @csrf_protected
-def like_reply(reply_id):
+def like_reply(thread_id, reply_id, reply_index):
     """Handle liking a reply."""
     user_id = session.get("user_id")
     likes.like_reply(user_id, reply_id)
-    return redirect(request.referrer)
+
+    thread = threads.get_thread(thread_id)
+    topic = topics.get_topic_by_id(thread.topic_id)
+    topic_text_id = topic.text_id
+
+    return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id) + f"#{reply_index}")
 
 
-@app.route("/unlike_reply/<int:reply_id>", methods=["POST"])
+@app.route("/unlike_reply/<int:thread_id>/<int:reply_id>/<int:reply_index>", methods=["POST"])
 @login_required
 @csrf_protected
-def unlike_reply(reply_id):
+def unlike_reply(thread_id, reply_id, reply_index):
     """Handle unliking a reply."""
     user_id = session.get("user_id")
     likes.unlike_reply(user_id, reply_id)
-    return redirect(request.referrer)
+
+    thread = threads.get_thread(thread_id)
+    topic = topics.get_topic_by_id(thread.topic_id)
+    topic_text_id = topic.text_id
+
+    return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id) + f"#{reply_index}")
 
 
 @app.route("/profile")
@@ -334,7 +365,7 @@ def register():
             session["csrf_token"] = generate_csrf_token()
             flash("Registration successful, welcome!", "message")
             return redirect(url_for("index"))
-        flash("Invalid username or password", "error")
+        flash("Username already exists", "error")
     return render_template("register.html")
 
 

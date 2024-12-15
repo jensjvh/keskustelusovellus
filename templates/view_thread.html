@@ -37,14 +37,14 @@
                         {% endfor %}
                     </p>
                     {% if replies[i].has_liked %}
-                        <form action="{{ url_for('unlike_reply', reply_id=replies[i].id) }}" method="post" class="d-inline">
+                    <form action="{{ url_for('unlike_reply', thread_id=thread.id, reply_id=replies[i].id, reply_index=i+1) }}" method="post" class="d-inline">
                             <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
                             <button type="submit" class="btn">
                                 <img src="{{ url_for('static', filename='unlike.png') }}" alt="Unlike" width="30" height="30">
                             </button>
                         </form>
                     {% else %}
-                        <form action="{{ url_for('like_reply', reply_id=replies[i].id) }}" method="post" class="d-inline">
+                    <form action="{{ url_for('like_reply', thread_id=thread.id, reply_id=replies[i].id, reply_index=i+1) }}" method="post" class="d-inline">
                             <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
                             <button type="submit" class="btn">
                                 <img src="{{ url_for('static', filename='like.png') }}" alt="Like" width="30" height="30">
