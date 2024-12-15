@@ -66,14 +66,31 @@ SECRET_KEY=<salainen-avain>
 2. Kirjoita uusi viesti ja lähetä se "Submit" -napilla.
 
 ### Ketjun ja viestin muokkaaminen
-1. Avaa oma ketjusi tai viestisi.
-2. Klikkaa "Edit" -painiketta ja tee tarvittavat muutokset.
+1. Avaa oma ketjusi tai navigoi viestiisi.
+2. Klikkaa "Edit" -painiketta ja tee tarvittavat muutokset. Ketjun ostikkoa voivat muokata ylläpitäjät ja ketjun luoja. Viestejä voi muokata vain ne luonut käyttäjä. Muokkaaminen lisää viestiin pysyvän tunnisteen muokkaamisesta.
 
-### Omien ketjujen ja viestien tarkastelu
+### Ketjujen ja viestien poistaminen
+1. Avaa oma ketjusi tai navigoi viestiisi.
+2. Klikkaa "Delete" -painiketta. Ketjua poistaessa sinun tulee vahvistaa vielä kertaalleen painamalla "Yes" painiketta vahvistaaksesi, tai "No" jos haluat siirtyä takaisin. Viestien poistoa ei tarvitse vahvistaa, vaan "Delete" poistaa ne suoraan. Ketjun poistaminen poistaa automaattisesti kaikki sen sisällä olevat viestit ja tykkäykset.
+
+### Omien tietojen tarkastelu
 1. Kirjaudu sisään.
 2. Klikkaa oikeassa yläkulmassa sijaitsevaa nappia "Hi, käyttäjänimi".
-3. Näet sivulla liittymisaikasi, luomasi ketjut ja luomasi viestit.
+3. Näet sivulla liittymisaikasi, tykkäyksesi, luomasi ketjut, luomasi viestit. Voit siirtyä linkkejä klikkaamalla ketjuihin tai viesteihin.
 
 ### Viestien hakeminen
 1. Klikkaa oikeassa yläkulmassa sijaitsevaa suurennuslasinappia.
-2. Kirjoita hakusana, ja paina hakunappia "Search".
+2. Kirjoita hakusana, ja paina hakunappia "Search". Ylläpitäjät näkevät haussa myös piilotettujen alueiden viestejä.
+
+### Keskustelualueen luominen (vain ylläpitäjät)
+1. Klikkaa etusivulla "New topic" painiketta.
+2. Anna sopiva uniikki "Topic text id", joka näkyy URL:ssä, uniikki keskustelualueen otsikko, sekä kuvaus.
+3. Halutessasi voit myös ruksata "Hidden topic?"-laatikon, jolloin keskustelualue ei näy normaaleille käyttäjille.
+
+### Keskustelualueen muokkaaminen (vain ylläpitäjät)
+1. Siirry jonkin keskustelualueen sivulle etusivulta.
+2. Klikkaa "Edit" -painiketta, ja täytä tekstilaatikot samalla tavalla kuin aluetta luodessa. Huomaa, että topic text id:n ja otsikon täytyy edelleen olla uniikki. Muokatessa voi myös muuttaa keskustelualueen "hidden"-tilaa.
+
+### Keskustelualueen poistaminen (vain ylläpitäjät)
+1. Siirry jonkin keskustelualueen sivulle etusivulta.
+2. Klikkaa "Delete" -painiketta. Vahvista poisto painikkeella "Yes", tai siirry takaisin painikkeella "No". Poistaminen poistaa kaikki ketjut, viestit ja tykkäykset keskustelualueen sisältä.
