@@ -7,7 +7,7 @@
 
 # Keskustelusovellus (Tsoha-projekti)
 
-Sovellus on toteutus keskustelufoorumista, jolla on keskustelualueita eri aiheille. Alueilla on keskusteluketjuja, joille näkyy tilastoja, kuten aloittaja, tietoja viimeisimmästä viestistä ja lukijoiden ja vastausten määrä. Sovelluksen tarkoituksena on ottaa inspiraatiota vanhan koulukunnan keskustelupalstoista, ja luoda sovellus jolla on moderni ulkoasu ja toiminnallisuus.
+Sovellus on toteutus keskustelufoorumista, jolla on keskustelualueita eri aiheille. Alueilla on keskusteluketjuja, joille näkyy tilastoja, kuten aloittaja, tietoja viimeisimmästä viestistä ja lukijoiden ja vastausten määrä. Sovelluksen tarkoituksena on ottaa inspiraatiota vanhan koulukunnan keskustelupalstoista, ja luoda sovellus jolla on moderni ulkoasu ja toiminnallisuus. Sovellusta voi testata paikallisesti alla olevilla ohjeilla, mutta löytyy myös osoitteesta https://keskustelusovellus-hxswtq.fly.dev/. Tämän branchin tiedostot sopivat paikalliseen testaamiseen, kun taas `fly-io` branch sisältää lisäksi fly.io:n deployn vaatimia tiedostoja.
 
 ## Tekninen kuvaus
 
