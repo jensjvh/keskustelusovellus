@@ -13,6 +13,7 @@ def get_replies(thread_id, user_id):
     sql = text("""
             SELECT R.id as id,
                    U.username as username,
+                   U.id as user_id,
                    R.content as content,
                    R.created_time as created_time,
                    (SELECT COUNT(*) FROM likes L
@@ -35,7 +36,24 @@ def get_replies(thread_id, user_id):
     return formatted_replies
 
 
+def get_reply_by_id(reply_id):
+    """Function for getting a reply by id."""
+    sql = text("""
+            SELECT thread_id, user_id
+            FROM replies WHERE id = :reply_id
+            """)
+    result = db.session.execute(sql, {"reply_id": reply_id})
+    return result.fetchone()
+
+
+def delete_reply(reply_id):
+    """Function for deleting a reply by id."""
+    sql = text("DELETE FROM replies WHERE id = :reply_id")
+    db.session.execute(sql, {"reply_id": reply_id})
+    db.session.commit()
+
 def get_replies_by_user(user_id):
+    """Function for getting all replies with user id."""
     sql = text("""
         SELECT R.id as id, R.content as content, R.created_time as created_time,
                Th.title as thread_title, Th.id as thread_id,
@@ -57,6 +75,7 @@ def get_matching_replies(query, is_admin):
         sql = text("""
             SELECT R.id as id,
                    U.username as username,
+                   U.id as user_id,
                    R.content as content,
                    R.created_time as created_time,
                    Th.title as thread_title,
@@ -76,6 +95,7 @@ def get_matching_replies(query, is_admin):
         sql = text("""
             SELECT R.id as id,
                    U.username as username,
+                   U.id as user_id,
                    R.content as content,
                    R.created_time as created_time,
                    Th.title as thread_title,
@@ -109,6 +129,7 @@ def format_replies(replies):
         formatted_reply = {
             'id': reply.id,
             'username': reply.username,
+            'user_id': reply.user_id,
             'content': reply.content.split("\n"),
             'created_time': reply.created_time,
             'thread_title': getattr(reply, 'thread_title', None),

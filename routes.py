@@ -310,6 +310,29 @@ def new_reply(topic_text_id, thread_id):
     return render_template("new_reply.html", topic=topic_record, thread=thread_record)
 
 
+@app.route("/topics/<topic_text_id>/<thread_id>/delete_reply/<int:reply_id>", methods=["get", "post"])
+@login_required
+@csrf_protected
+def delete_reply(topic_text_id, thread_id, reply_id):
+    """
+    Function for handling a route for deleting a reply.
+
+    Parameters
+    ----------
+    topic_text_id (str): String id of the topic.
+    thread_id (int): id of the thread.
+    reply_id (int): id of the reply.
+    """
+    reply = replies.get_reply_by_id(reply_id)
+    if reply.user_id != session.get("user_id") and not session.get("is_admin", False):
+        flash("You do not have permission to delete this reply", "error")
+        return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id))
+
+    replies.delete_reply(reply_id)
+    flash("Reply deleted successfully", "message")
+    return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id))
+
+
 @app.route("/like_reply/<int:thread_id>/<int:reply_id>/<int:reply_index>", methods=["POST"])
 @login_required
 @csrf_protected

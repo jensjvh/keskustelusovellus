@@ -51,6 +51,12 @@
                             </button>
                         </form>
                     {% endif %}
+                    {% if session.user_id == replies[i].user_id or session.is_admin %}
+                        <form action="{{ url_for('delete_reply', topic_text_id=topic.text_id, thread_id=thread.id, reply_id=replies[i].id) }}" method="post" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    {% endif %}
                     <br><small class="likes text-muted">{{ replies[i].likes }} likes</small>
                 </div>
             </div>
