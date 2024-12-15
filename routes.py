@@ -360,6 +360,42 @@ def new_reply(topic_text_id, thread_id):
     return render_template("new_reply.html", topic=topic_record, thread=thread_record)
 
 
+@app.route("/topics/<topic_text_id>/<thread_id>/edit_reply/<int:reply_id>", methods=["get", "post"])
+@check_thread_exists
+@check_reply_exists
+@admin_only_if_hidden
+@login_required
+@csrf_protected
+def edit_reply(topic_text_id, thread_id, reply_id):
+    """
+    Function for handling a route for editing a reply.
+
+    Parameters
+    ----------
+    topic_text_id (str): String id of the topic.
+    thread_id (int): id of the thread.
+    reply_id (int): id of the reply.
+    """
+    reply = replies.get_reply_by_id(reply_id)
+
+    if reply.user_id != session.get("user_id"):
+        flash("You do not have permission to edit this reply", "error")
+        return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id))
+
+    if request.method == "POST":
+        new_content = request.form["new_content"]
+
+        if replies.validate_reply(new_content) is False:
+            flash("Invalid length for new reply", "error")
+            return redirect(url_for('edit_reply', topic_text_id=topic_text_id, thread_id=thread_id, reply_id=reply_id))
+        
+        replies.edit_reply(reply_id, new_content)
+        flash('Reply edited')
+        return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id))
+    
+    return render_template("edit_reply.html", topic_text_id=topic_text_id, thread_id=thread_id, reply_id=reply_id, reply=reply.content)
+
+
 @app.route("/topics/<topic_text_id>/<thread_id>/delete_reply/<int:reply_id>", methods=["get", "post"])
 @check_thread_exists
 @check_reply_exists

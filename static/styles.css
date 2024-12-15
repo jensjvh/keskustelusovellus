@@ -70,3 +70,9 @@ hr.w-100 {
 .likes {
     padding: 12px 6px;
 }
+
+.custom-btn {
+    padding: 6px 12px; /* Adjust padding as needed */
+    font-size: 14px;   /* Match font size */
+    line-height: 1.5;  /* Ensure consistent height */
+}

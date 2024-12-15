@@ -35,7 +35,6 @@ def login(username, password):
         session["user_id"] = user.id
         session["username"] = user.username
         session["is_admin"] = user.is_admin
-        set_last_login(user.id)
         return True
     return False
 
@@ -49,13 +48,6 @@ def get_user_by_username(username):
     """)
     result = db.session.execute(sql, {"username": username})
     return result.fetchone()
-
-
-def set_last_login(user_id):
-    """Set the last login time of the user."""
-    sql = text("""UPDATE users SET last_login=CURRENT_TIMESTAMP WHERE id=:id;""")
-    db.session.execute(sql, {"id": user_id})
-    db.session.commit()
 
 
 def register(username, password):

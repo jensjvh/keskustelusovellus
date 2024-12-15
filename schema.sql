@@ -33,7 +33,8 @@ CREATE TABLE replies (
     thread_id INTEGER REFERENCES threads(id) ON DELETE CASCADE,
     user_id INTEGER REFERENCES users(id),
     content TEXT NOT NULL,
-    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_edited BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE likes (

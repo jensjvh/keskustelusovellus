@@ -16,6 +16,7 @@ def get_replies(thread_id, user_id):
                    U.id as user_id,
                    R.content as content,
                    R.created_time as created_time,
+                   R.is_edited as is_edited,
                    (SELECT COUNT(*) FROM likes L
                    WHERE L.reply_id = R.id) as likes,
                    EXISTS (SELECT 1 FROM likes L
@@ -39,7 +40,7 @@ def get_replies(thread_id, user_id):
 def get_reply_by_id(reply_id):
     """Function for getting a reply by id."""
     sql = text("""
-            SELECT thread_id, user_id
+            SELECT thread_id, user_id, content
             FROM replies WHERE id = :reply_id
             """)
     result = db.session.execute(sql, {"reply_id": reply_id})
@@ -138,7 +139,8 @@ def format_replies(replies):
             'topic_text_id': getattr(reply, 'topic_text_id', None),
             'likes': getattr(reply, 'likes', None),
             'has_liked': getattr(reply, 'has_liked', None),
-            'is_hidden': getattr(reply, 'is_hidden', None)
+            'is_hidden': getattr(reply, 'is_hidden', None),
+            'is_edited': getattr(reply, 'is_edited', None)
         }
         formatted_replies.append(formatted_reply)
 
@@ -159,6 +161,21 @@ def remove_replies_with_thread_id(thread_id):
                """)
 
     db.session.execute(sql, {"thread_id": thread_id})
+
+    db.session.commit()
+
+
+def edit_reply(reply_id, content):
+    """Edit a reply."""
+    sql = text("""
+            UPDATE replies
+            SET content = :content,
+                is_edited = TRUE
+            WHERE id = :reply_id
+                """)
+    
+    db.session.execute(sql, {"reply_id": reply_id,
+                             "content": content})
 
     db.session.commit()
 
