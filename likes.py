@@ -11,7 +11,7 @@ def like_reply(user_id, reply_id):
         VALUES (:user_id, :reply_id)
         ON CONFLICT DO NOTHING;
         """)
-    
+
     db.session.execute(sql, {"user_id": user_id,
                              "reply_id": reply_id})
     db.session.commit()
@@ -23,7 +23,7 @@ def unlike_reply(user_id, reply_id):
             DELETE FROM likes
             WHERE user_id = :user_id AND reply_id = :reply_id;
         """)
-    
+
     db.session.execute(sql, {"user_id": user_id,
                              "reply_id": reply_id})
     db.session.commit()
@@ -35,7 +35,8 @@ def has_liked_reply(user_id, reply_id):
         SELECT COUNT(*) FROM likes
         WHERE user_id = :user_id AND reply_id = :reply_id;
     """)
-    result = db.session.execute(sql, {"user_id": user_id, "reply_id": reply_id})
+    result = db.session.execute(
+        sql, {"user_id": user_id, "reply_id": reply_id})
     return result.scalar() > 0
 
 

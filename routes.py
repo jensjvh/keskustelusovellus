@@ -3,8 +3,8 @@
 from app import app
 from datetime import datetime
 from functools import wraps
-from flask import render_template, request, redirect, session, url_for, abort, flash
 import secrets
+from flask import render_template, request, redirect, session, url_for, abort, flash
 
 
 import users
@@ -98,6 +98,7 @@ def check_reply_exists(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
 def generate_csrf_token():
     """Generate a csrf token."""
     if 'csrf_token' not in session:
@@ -182,12 +183,20 @@ def edit_topic(topic_text_id):
         is_hidden = request.form.get("is_hidden") == "on"
         if topics.validate_topic(new_title, new_text_id, new_description) is False:
             return redirect(url_for('edit_topic', topic_text_id=topic_text_id))
-        if not topics.edit_topic_with_topic_id(topic_id, new_text_id, new_title, new_description, is_hidden):
-            flash(f"A topic with the title {new_title} or text id {new_text_id} already exists")
+        if not topics.edit_topic_with_topic_id(topic_id,
+                                               new_text_id,
+                                               new_title,
+                                               new_description,
+                                               is_hidden):
+            flash(
+                f"A topic with the title {new_title}\
+                or text id {new_text_id} already exists", "error")
             return redirect(url_for('edit_topic', topic_text_id=topic_text_id))
         flash(f'Changed topic title from {topic_record.title} to {new_title}')
         return redirect(url_for('index'))
-    return render_template("edit_topic.html", topic_text_id=topic_record.text_id, topic=topic_record)
+    return render_template("edit_topic.html",
+                           topic_text_id=topic_record.text_id,
+                           topic=topic_record)
 
 
 @app.route("/topics/<topic_text_id>/delete_topic", methods=["get", "post"])
@@ -345,8 +354,6 @@ def new_reply(topic_text_id, thread_id):
     """
     topic_record = topics.get_topic_by_text_id(topic_text_id)
     thread_record = threads.get_thread(thread_id)
-    thread_id = thread_record.id
-    topic_id = topic_record.id
 
     if request.method == "POST":
         user_id = session.get("user_id")
@@ -387,16 +394,24 @@ def edit_reply(topic_text_id, thread_id, reply_id):
 
         if replies.validate_reply(new_content) is False:
             flash("Invalid length for new reply", "error")
-            return redirect(url_for('edit_reply', topic_text_id=topic_text_id, thread_id=thread_id, reply_id=reply_id))
-        
+            return redirect(url_for('edit_reply',
+                                    topic_text_id=topic_text_id,
+                                    thread_id=thread_id,
+                                    reply_id=reply_id))
+
         replies.edit_reply(reply_id, new_content)
         flash('Reply edited')
         return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id))
-    
-    return render_template("edit_reply.html", topic_text_id=topic_text_id, thread_id=thread_id, reply_id=reply_id, reply=reply.content)
+
+    return render_template("edit_reply.html",
+                           topic_text_id=topic_text_id,
+                           thread_id=thread_id,
+                           reply_id=reply_id,
+                           reply=reply.content)
 
 
-@app.route("/topics/<topic_text_id>/<thread_id>/delete_reply/<int:reply_id>", methods=["get", "post"])
+@app.route("/topics/<topic_text_id>/<thread_id>/delete_reply/<int:reply_id>",
+           methods=["get", "post"])
 @check_thread_exists
 @check_reply_exists
 @login_required
@@ -435,7 +450,9 @@ def like_reply(thread_id, reply_id, reply_index):
     topic = topics.get_topic_by_id(thread.topic_id)
     topic_text_id = topic.text_id
 
-    return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id) + f"#{reply_index}")
+    return redirect(url_for('view_thread',
+                            topic_text_id=topic_text_id,
+                            thread_id=thread_id) + f"#{reply_index}")
 
 
 @app.route("/unlike_reply/<int:thread_id>/<int:reply_id>/<int:reply_index>", methods=["POST"])
@@ -452,7 +469,9 @@ def unlike_reply(thread_id, reply_id, reply_index):
     topic = topics.get_topic_by_id(thread.topic_id)
     topic_text_id = topic.text_id
 
-    return redirect(url_for('view_thread', topic_text_id=topic_text_id, thread_id=thread_id) + f"#{reply_index}")
+    return redirect(url_for('view_thread',
+                            topic_text_id=topic_text_id,
+                            thread_id=thread_id) + f"#{reply_index}")
 
 
 @app.route("/profile")

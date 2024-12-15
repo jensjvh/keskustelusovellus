@@ -23,7 +23,7 @@ def validate_topic(title, text_id, description):
         flash("Invalid title length", "error")
         return False
     if not validate_text_id(text_id):
-        #flash("Invalid text id characters or length", "error")
+        flash("Invalid text id characters or length", "error")
         return False
     if not validate_description(description):
         flash("Invalid description", "error")
@@ -66,9 +66,9 @@ def create_topic(text_id, title, description, is_hidden=False):
                     VALUES (:text_id, :title, :description, :is_hidden);"""
         )
         db.session.execute(sql, {"text_id": text_id,
-                                "title": title,
-                                "description": description,
-                                "is_hidden": is_hidden})
+                                 "title": title,
+                                 "description": description,
+                                 "is_hidden": is_hidden})
         db.session.commit()
     except IntegrityError:
         db.session.rollback()
@@ -91,10 +91,10 @@ def edit_topic_with_topic_id(topic_id, text_id, title, description, is_hidden):
                 WHERE id = :topic_id;
                 """)
         db.session.execute(sql, {"topic_id": topic_id,
-                                "text_id": text_id,
-                                "title": title,
-                                "description": description,
-                                "is_hidden": is_hidden})
+                                 "text_id": text_id,
+                                 "title": title,
+                                 "description": description,
+                                 "is_hidden": is_hidden})
         db.session.commit()
     except IntegrityError:
         db.session.rollback()
@@ -208,15 +208,15 @@ def get_topic_by_title(title):
     return result.fetchone()
 
 
-def get_topic_by_id(id):
+def get_topic_by_id(topic_id):
     """
     Function for returning the SQL query result of topic with given id.
     """
     sql = text("""
         SELECT id, text_id, title, description, is_hidden
-        FROM Topics WHERE id = :id;
+        FROM Topics WHERE id = :topic_id;
     """)
-    result = db.session.execute(sql, {"id": id})
+    result = db.session.execute(sql, {"topic_id": topic_id})
 
     return result.fetchone()
 

@@ -53,6 +53,7 @@ def delete_reply(reply_id):
     db.session.execute(sql, {"reply_id": reply_id})
     db.session.commit()
 
+
 def get_replies_by_user(user_id):
     """Function for getting all replies with user id."""
     sql = text("""
@@ -124,6 +125,7 @@ def get_matching_replies(query, is_admin):
 
 
 def format_replies(replies):
+    """Format replies to securely add newlines to user reply."""
     formatted_replies = []
 
     for reply in replies:
@@ -148,6 +150,7 @@ def format_replies(replies):
 
 
 def validate_reply(reply):
+    """Validate reply length."""
     if len(reply) > REPLY_MAX_LENGTH or len(reply) < REPLY_MIN_LENGTH:
         return False
     return True
@@ -173,7 +176,7 @@ def edit_reply(reply_id, content):
                 is_edited = TRUE
             WHERE id = :reply_id
                 """)
-    
+
     db.session.execute(sql, {"reply_id": reply_id,
                              "content": content})
 
