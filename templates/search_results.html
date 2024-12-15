@@ -16,7 +16,7 @@
                                     <br>
                                 {% endif %}
                             {% endfor %}
-                            <small class="text-muted">{{ result.created_time }}</small>
+                            <small class="text-muted">{{ result.created_time.strftime('%B %d, %Y at %H:%M:%S') }}</small>
                             <br>
                             <small class="text-muted">
                                 In thread: <a href="{{ url_for('view_thread', topic_text_id=result.topic_text_id, thread_id=result.thread_id) }}">{{ result.thread_title }}</a>

@@ -11,7 +11,7 @@
             <li class="list-group-item">
                 <b>{{ like.reply_username }}</b>
                 <p>{{ like.content }}</p>
-                <small class="text-muted">{{ like.created_time.strftime('%B %d, %Y %I:%M %p') }}</small>
+                <small class="text-muted">{{ like.created_time.strftime('%B %d, %Y at %H:%M:%S') }}</small>
                 <br>
                 <small class="text-muted">
                     In thread: <a href="{{ url_for('view_thread', topic_text_id=like.topic_text_id, thread_id=like.thread_id) }}">{{ like.thread_title }}</a>
@@ -27,7 +27,7 @@
         {% for thread in threads %}
             <li class="list-group-item">
                 <a href="{{ url_for('view_thread', topic_text_id=thread.topic_text_id, thread_id=thread.id) }}">{{ thread.title }}</a>
-                <small class="text-muted">{{ thread.created_time.strftime('%B %d, %Y %I:%M %p') }}</small>
+                <small class="text-muted">{{ thread.created_time.strftime('%B %d, %Y at %H:%M:%S') }}</small>
                 <br>
                 <small class="text-muted">
                 In {% if thread.topic_is_hidden %}hidden{% endif %} topic: <a href="{{ url_for('view_threads', topic_text_id=thread.topic_text_id) }}">{{ thread.topic_title }}</a>
@@ -41,7 +41,7 @@
         {% for reply in replies %}
             <li class="list-group-item">
                 <p>{{ reply.content }}</p>
-                <small class="text-muted">{{ reply.created_time.strftime('%B %d, %Y %I:%M %p') }}</small>
+                <small class="text-muted">{{ reply.created_time.strftime('%B %d, %Y at %H:%M:%S') }}</small>
                 <br>
                 <small class="text-muted">
                     In thread: <a href="{{ url_for('view_thread', topic_text_id=reply.topic_text_id, thread_id=reply.thread_id) }}">{{ reply.thread_title }}</a>

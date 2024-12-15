@@ -41,6 +41,8 @@ def admin_only_if_hidden(f):
     def decorated_function(*args, **kwargs):
         topic_text_id = kwargs.get('topic_text_id')
         topic = topics.get_topic_by_text_id(topic_text_id)
+        if topic is None:
+            abort(404, description="Topic not found")
         if topic.is_hidden and not session.get('is_admin', False):
             abort(403, description="Access restricted")
         return f(*args, **kwargs)
@@ -60,6 +62,41 @@ def csrf_protected(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+def check_topic_exists(f):
+    """Decorator for checking if topic exists."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        topic_text_id = kwargs.get('topic_text_id')
+        topic = topics.get_topic_by_text_id(topic_text_id)
+        if topic is None:
+            abort(404, description="Topic not found")
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def check_thread_exists(f):
+    """Decorator for checking if thread exists."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        thread_id = kwargs.get('thread_id')
+        thread = threads.get_thread(thread_id)
+        if thread is None:
+            abort(404, description="Thread not found")
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def check_reply_exists(f):
+    """Decorator for checking if reply exists."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        reply_id = kwargs.get('reply_id')
+        reply = replies.get_reply_by_id(reply_id)
+        if reply is None:
+            abort(404, description="Reply not found")
+        return f(*args, **kwargs)
+    return decorated_function
 
 def generate_csrf_token():
     """Generate a csrf token."""
@@ -86,6 +123,7 @@ def view_topics():
 
 
 @app.route("/topics/<topic_text_id>")
+@check_topic_exists
 @admin_only_if_hidden
 def view_threads(topic_text_id):
     """
@@ -128,6 +166,7 @@ def new_topic():
 
 
 @app.route("/topics/<topic_text_id>/edit_topic", methods=["get", "post"])
+@check_topic_exists
 @admin_only
 @login_required
 @csrf_protected
@@ -152,6 +191,7 @@ def edit_topic(topic_text_id):
 
 
 @app.route("/topics/<topic_text_id>/delete_topic", methods=["get", "post"])
+@check_topic_exists
 @admin_only
 @login_required
 @csrf_protected
@@ -168,6 +208,7 @@ def delete_topic(topic_text_id):
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>")
+@check_thread_exists
 @admin_only_if_hidden
 def view_thread(topic_text_id, thread_id):
     """
@@ -190,6 +231,7 @@ def view_thread(topic_text_id, thread_id):
 
 
 @app.route("/topics/<topic_text_id>/new_thread", methods=["get", "post"])
+@check_topic_exists
 @admin_only_if_hidden
 @login_required
 @csrf_protected
@@ -225,6 +267,7 @@ def new_thread(topic_text_id):
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>/edit_thread", methods=["get", "post"])
+@check_thread_exists
 @admin_only_if_hidden
 @login_required
 @csrf_protected
@@ -262,6 +305,7 @@ def edit_thread(topic_text_id, thread_id):
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>/delete_thread", methods=["get", "post"])
+@check_thread_exists
 @admin_only
 @login_required
 @csrf_protected
@@ -286,6 +330,7 @@ def delete_thread(topic_text_id, thread_id):
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>/new_reply", methods=["get", "post"])
+@check_thread_exists
 @admin_only_if_hidden
 @login_required
 @csrf_protected
@@ -316,6 +361,8 @@ def new_reply(topic_text_id, thread_id):
 
 
 @app.route("/topics/<topic_text_id>/<thread_id>/delete_reply/<int:reply_id>", methods=["get", "post"])
+@check_thread_exists
+@check_reply_exists
 @login_required
 @csrf_protected
 def delete_reply(topic_text_id, thread_id, reply_id):
@@ -339,6 +386,8 @@ def delete_reply(topic_text_id, thread_id, reply_id):
 
 
 @app.route("/like_reply/<int:thread_id>/<int:reply_id>/<int:reply_index>", methods=["POST"])
+@check_thread_exists
+@check_reply_exists
 @login_required
 @csrf_protected
 def like_reply(thread_id, reply_id, reply_index):
@@ -354,6 +403,8 @@ def like_reply(thread_id, reply_id, reply_index):
 
 
 @app.route("/unlike_reply/<int:thread_id>/<int:reply_id>/<int:reply_index>", methods=["POST"])
+@check_thread_exists
+@check_reply_exists
 @login_required
 @csrf_protected
 def unlike_reply(thread_id, reply_id, reply_index):
