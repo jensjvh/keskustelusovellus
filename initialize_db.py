@@ -77,34 +77,99 @@ def create_topics():
     Create default topics:
     General Discussion,
     Announcements,
-    Feedback.
+    Feedback,
+    Hidden.
     """
     with app.app_context():
         try:
             sql = text(
-                """INSERT INTO topics (text_id, title, description)
-                   VALUES (:text_id, :title, :description);"""
+                """INSERT INTO topics (text_id, title, description, is_hidden)
+                   VALUES (:text_id, :title, :description, :is_hidden);"""
             )
             db.session.execute(
                 sql, {"text_id": "general_discussion",
                       "title": "General Discussion",
-                      "description": "Discuss anything."}
+                      "description": "Discuss anything.",
+                      "is_hidden": False}
             )
             db.session.execute(
                 sql, {"text_id": "announcements",
                       "title": "Announcements",
-                      "description": "Forum announcements."}
+                      "description": "Forum announcements.",
+                      "is_hidden": False}
             )
             db.session.execute(
                 sql, {"text_id": "feedback",
                       "title": "Feedback",
-                      "description": "Give us feedback."}
+                      "description": "Give us feedback.",
+                      "is_hidden": False}
+            )
+            db.session.execute(
+                sql, {"text_id": "hidden",
+                      "title": "Hidden",
+                      "description": "This should be invisible to normal users.",
+                      "is_hidden": True}
             )
             db.session.commit()
             print("Default topics created successfully.")
         except Exception as e:
             print(f"An error occurred while creating the default topics: {e}")
 
+
+def create_threads_and_replies():
+    """
+    Create default threads and replies.
+    """
+    with app.app_context():
+        try:
+            thread_sql = text(
+                """INSERT INTO threads (topic_id, user_id, title)
+                   VALUES (:topic_id, :user_id, :title);"""
+            )
+            reply_sql = text(
+                """INSERT INTO replies (thread_id, user_id, content)
+                   VALUES (:thread_id, :user_id, :content);"""
+            )
+            db.session.execute(
+                thread_sql, {"topic_id": 1,
+                      "user_id": 1,
+                      "title": "User's thread"}
+            )
+            db.session.execute(
+                reply_sql, {"thread_id": 1,
+                      "user_id": 1,
+                      "content": "New\nline"}
+            )
+            db.session.execute(
+                reply_sql, {"thread_id": 1,
+                      "user_id": 1,
+                      "content": "A starting reply"}
+            )
+            db.session.execute(
+                thread_sql, {"topic_id": 1,
+                      "user_id": 2,
+                      "title": "Admin's thread"}
+            )
+            db.session.execute(
+                reply_sql, {"thread_id": 2,
+                      "user_id": 2,
+                      "content": "Admin starting reply"}
+            )
+            db.session.execute(
+                thread_sql, {"topic_id": 4,
+                      "user_id": 2,
+                      "title": "Hidden thread"}
+            )
+            db.session.execute(
+                reply_sql, {"thread_id": 3,
+                      "user_id": 2,
+                      "content": "Hidden thread starting reply"}
+            )
+            db.session.commit()
+            print("Default threads and replies created successfully.")
+        except Exception as e:
+            print(f"An error occurred while creating the default threads and replies: {e}")
+        
 
 def initialize_db():
     """Execute all specified functions."""
@@ -113,6 +178,7 @@ def initialize_db():
     create_default_user()
     create_admin_user()
     create_topics()
+    create_threads_and_replies()
 
 
 if __name__ == "__main__":
