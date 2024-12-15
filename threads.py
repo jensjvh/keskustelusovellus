@@ -99,7 +99,6 @@ def get_threads(topic):
                Th.user_id as user_id,
                Th.title as title,
                Th.created_time as created_time,
-               Th.updated_time as updated_time,
                COUNT(R.id) as replies,
                MAX(R.created_time) AS last_reply
         FROM Threads Th
@@ -120,7 +119,6 @@ def get_threads(topic):
                       'topic_id': thread.topic_id,
                       'user_id': thread.user_id,
                       'created_time': thread.created_time,
-                      'updated_time': thread.updated_time,
                       'replies': thread.replies,
                       }
         if thread.last_reply:
@@ -139,7 +137,6 @@ def get_threads_by_user(user_id):
     sql = text("""
         SELECT Th.id, Th.title,
                Th.created_time,
-               Th.updated_time,
                T.title as topic_title,
                T.text_id as topic_text_id,
                T.is_hidden as topic_is_hidden
@@ -161,7 +158,6 @@ def get_thread(thread_id):
                U.username as username,
                Th.title as title,
                Th.created_time as created_time,
-               Th.updated_time as updated_time,
                COUNT(R.id) as replies,
                MAX(R.created_time) AS last_reply
         FROM Threads Th

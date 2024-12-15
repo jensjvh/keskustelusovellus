@@ -9,7 +9,6 @@ CREATE TABLE users (
     username VARCHAR(15) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_login TIMESTAMP,
     is_admin BOOLEAN DEFAULT FALSE
 );
 
@@ -26,8 +25,7 @@ CREATE TABLE threads (
     topic_id INTEGER REFERENCES topics(id) ON DELETE CASCADE,
     user_id INTEGER REFERENCES users(id),
     title VARCHAR(50) NOT NULL,
-    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE replies (
@@ -35,8 +33,7 @@ CREATE TABLE replies (
     thread_id INTEGER REFERENCES threads(id) ON DELETE CASCADE,
     user_id INTEGER REFERENCES users(id),
     content TEXT NOT NULL,
-    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE likes (
